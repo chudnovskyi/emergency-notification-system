@@ -1,1 +1,5 @@
 rootProject.name = 'emergency-notification-system'
+
+include 'api-gateway'
+include 'api-service'
+include 'discovery-server'

@@ -1,10 +1,10 @@
-package com.example.notification;
+package com.example.discovery;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EmergencyNotificationSystemApplicationTests {
+class DiscoveryServerApplicationTests {
 
     @Test
     void contextLoads() {
