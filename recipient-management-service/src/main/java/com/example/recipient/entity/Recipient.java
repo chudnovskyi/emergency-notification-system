@@ -18,9 +18,15 @@ public class Recipient implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
     private String telegramId;
+
+    @Column(unique = true)
     private String phoneNumber;
+
+    private String name;
     private Geolocation geolocation;
 }
