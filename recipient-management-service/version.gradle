@@ -1,0 +1,5 @@
+ext {
+    versions = [
+            mapstruct: '1.4.2.Final'
+    ]
+}

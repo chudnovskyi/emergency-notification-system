@@ -7,10 +7,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: api-service
-          uri: lb://API-SERVICE
+        - id: recipient-management-service
+          uri: lb://RECIPIENT-MANAGEMENT-SERVICE
           predicates:
-            - Path=/api/v1/test/**
+            - Path=/api/v1/recipients/**
 
 eureka:
   client:

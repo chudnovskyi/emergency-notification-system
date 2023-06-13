@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:alpine3.17
+    restart: always
+    environment:
+      POSTGRES_DB: emergency
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data
+    ports:
+      - '5432:5432'
+    volumes:
+        - db-postgres:/data
+
+volumes:
+  db-postgres: { }
