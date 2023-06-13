@@ -1,25 +1,26 @@
 # Emergency Notification System
 
-> This system allows you to quickly and efficiently send notifications to a large number of users during emergency
+> This system allows you to quickly and efficiently send notifications to a large number of recipients during emergency
 > situations.
 
 ## Functional requirements:
 
-- [ ] **Notification Sending:** Clients should be able to send notifications to the registered users, alerting them
+- [ ] **Notification Sending:** Clients should be able to send notifications to the registered recipients, alerting them
   about emergency situations, through different communication channels, such as.
     - [ ] email
     - [ ] telegram
     - [ ] push notifications
     - [ ] SMS
-- [ ] **Bulk User Registration:** The system should support registering a large number of users at once by importing
-  data from .xls or .csv files.
-- [ ] **Multiple Notification Channels:** Users should have the flexibility to receive notifications through different
-- [ ] **Notification Templates:** The system should allow users to create and manage notification templates to
-  streamline the notification creation process.
-- [ ] **Geolocation Sending:** The system should support sending notifications based on the user's geolocation to
+- [x] **Bulk Recipient Registration:** The system should support registering a large number of recipients at once by
+  importing data from:
+    - [x] .xlsx
+    - [ ] .csv
+- [ ] **Notification Templates:**  The system should allow clients to create and manage pre-defined notification
+  templates for instantaneously sending notifications.
+- [ ] **Geolocation Sending:** The system should support sending notifications based on the recipient's geolocation to
   provide location-specific information during emergencies.
-- [ ] **User Response:** Users should be able to respond to notifications, indicating their safety status or any other
-  relevant information (e.g., if they are safe and already in a shelter).
+- [ ] **Recipient Response:** Recipients should have the capability to respond to notifications, providing their safety
+  status or any other pertinent information (e.g., indicating whether they are safe and currently located in a shelter).
 
 ## Non-functional requirements:
 
@@ -29,5 +30,11 @@
   delays.
 - [ ] **Low Latency:** The system should have low latency, ensuring that notifications are sent and received promptly to
   minimize response time during emergencies.
-- [ ] **Scalability:** The system should be able to handle a growing number of users and notifications without
+- [ ] **Scalability:** The system should be able to handle a growing number of recipients and notifications without
   compromising performance or functionality.
+
+## Additional Features:
+
+- **Email Update Guarantee:** When registering a recipient with an email address that already exists in the system, the
+  existing recipient's information will be updated with the new registration details. (if there are several equal email
+  addresses in xlsx file, the last appearance will always overwrite all previous)

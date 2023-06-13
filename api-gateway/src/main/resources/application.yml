@@ -10,7 +10,7 @@ spring:
         - id: recipient-management-service
           uri: lb://RECIPIENT-MANAGEMENT-SERVICE
           predicates:
-            - Path=/api/v1/recipients/**
+            - Path=/api/v1/recipients/**,/api/v1/files/**
 
 eureka:
   client:

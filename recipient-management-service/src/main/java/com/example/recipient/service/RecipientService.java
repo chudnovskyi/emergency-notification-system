@@ -21,6 +21,13 @@ public class RecipientService {
     private final MessageSourceService message;
 
     public Long register(RecipientRequest request) {
+        if (request.email() != null && recipientRepository.findByEmail(request.email()).isPresent()) {
+            Recipient recipient = recipientRepository.findByEmail(request.email()).orElseThrow();
+            Recipient update = mapper.update(request, recipient);
+            recipientRepository.saveAndFlush(update);
+            return recipient.getId();
+        }
+
         return Optional.of(request)
                 .map(mapper::mapToEntity)
                 .map(recipientRepository::save)

@@ -11,20 +11,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "recipients")
+@Table(name = "recipients",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "email_unique", columnNames = {"email"}),
+                @UniqueConstraint(name = "telegram_id_unique", columnNames = {"telegramId"}),
+                @UniqueConstraint(name = "phone_number_unique", columnNames = {"phoneNumber"})
+        }
+)
 public class Recipient implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String email;
-
-    @Column(unique = true)
     private String telegramId;
-
-    @Column(unique = true)
     private String phoneNumber;
 
     private String name;
