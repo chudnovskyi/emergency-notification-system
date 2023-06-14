@@ -1,13 +1,11 @@
 package com.example.recipient.exception;
 
 import com.example.recipient.dto.response.ErrorResponse;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -20,11 +18,6 @@ public class CustomExceptionHandler {
     @ExceptionHandler(BulkRecipientRegistrationException.class)
     public ResponseEntity<Map<String, String>> handleBulkRecipientRegistrationException(BulkRecipientRegistrationException e) {
         return new ResponseEntity<>(e.getErrors(), BAD_REQUEST);
-    }
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDaoConstraintExceptions(SQLException e) {
-        return generateDefaultErrorMessage(e, BAD_REQUEST);
     }
 
     @ExceptionHandler(RecipientNotFoundException.class)

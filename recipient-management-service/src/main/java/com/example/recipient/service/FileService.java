@@ -13,7 +13,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,7 +52,7 @@ public class FileService {
                         new GeolocationRequest(Double.parseDouble(row.getCell(5).toString()), // latitude
                                 Double.parseDouble(row.getCell(6).toString())  // longitude
                         )));
-            } catch (DataIntegrityViolationException e) {
+            } catch (RuntimeException e) {
                 error.put(row.getCell(2).toString(), e.getMessage());
             }
         }

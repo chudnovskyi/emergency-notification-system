@@ -10,7 +10,17 @@ spring:
         - id: recipient-management-service
           uri: lb://RECIPIENT-MANAGEMENT-SERVICE
           predicates:
-            - Path=/api/v1/recipients/**,/api/v1/files/**
+            - Path=/recipient-management-service/api-docs/**,/api/v1/recipients/**,/api/v1/files/**
+
+# http://localhost:8080/webjars/swagger-ui/index.html
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    url: http://localhost:8080/v3/api-docs
+    urls:
+      - name: recipient-management-service
+        url: /recipient-management-service/api-docs
 
 eureka:
   client:

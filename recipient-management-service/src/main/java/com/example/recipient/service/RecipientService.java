@@ -8,11 +8,14 @@ import com.example.recipient.exception.RecipientRegistrationException;
 import com.example.recipient.mapper.RecipientMapper;
 import com.example.recipient.repository.RecipientRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RecipientService {
 
@@ -28,13 +31,15 @@ public class RecipientService {
             return recipient.getId();
         }
 
-        return Optional.of(request)
-                .map(mapper::mapToEntity)
-                .map(recipientRepository::save)
-                .map(Recipient::getId)
-                .orElseThrow(() -> {
-                    throw new RecipientRegistrationException(message.getProperty("recipient.registration"));
-                });
+        try {
+            return Optional.of(request)
+                    .map(mapper::mapToEntity)
+                    .map(recipientRepository::save)
+                    .map(Recipient::getId)
+                    .orElseThrow();
+        } catch (DataIntegrityViolationException e) {
+            throw new RecipientRegistrationException(e.getMessage());
+        }
     }
 
     public RecipientResponse receive(Long id) {

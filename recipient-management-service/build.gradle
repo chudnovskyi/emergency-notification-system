@@ -13,6 +13,9 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    testAnnotationProcessor {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
@@ -28,24 +31,24 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.projectlombok:lombok'
+
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.swagger}"
     implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
+    implementation "org.apache.poi:poi:${versions.apache_poi}"
+    implementation "org.apache.poi:poi-ooxml:${versions.apache_poi}"
 
-    implementation 'org.apache.poi:poi:5.2.0'
-    implementation 'org.apache.poi:poi-ooxml:5.2.0'
-    implementation 'org.jxls:jxls-jexcel:1.0.9'
-    implementation 'org.dhatim:fastexcel-reader:0.15.3'
-    implementation 'org.dhatim:fastexcel:0.15.3'
-
-    compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
 
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation "org.assertj:assertj-core:${versions.assertj}"
+//    testImplementation "com.github.tomakehurst:wiremock:${versions.wiremock}"
 }
 
 dependencyManagement {

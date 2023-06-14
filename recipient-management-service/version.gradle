@@ -1,5 +1,9 @@
 ext {
     versions = [
-            mapstruct: '1.4.2.Final'
+            mapstruct : '1.4.2.Final',
+            apache_poi: '5.2.0',
+            swagger   : '2.0.4',
+            wiremock  : '2.16.0',
+            assertj   : '3.11.1'
     ]
 }

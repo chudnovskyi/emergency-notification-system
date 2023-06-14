@@ -19,6 +19,10 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+springdoc:
+  api-docs:
+    path: /recipient-management-service/api-docs
+
 eureka:
   client:
     service-url:
