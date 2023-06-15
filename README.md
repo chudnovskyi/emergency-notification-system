@@ -6,7 +6,7 @@
 ## Functional requirements:
 
 - [ ] **Notification Sending:** Clients should be able to send notifications to the registered recipients, alerting them
-  about emergency situations, through different communication channels, such as.
+  about emergency situations, through different communication channels, such as:
     - [ ] email
     - [ ] telegram
     - [ ] push notifications

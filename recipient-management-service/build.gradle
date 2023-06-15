@@ -28,10 +28,15 @@ ext {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.projectlombok:lombok'
+
+    implementation "io.jsonwebtoken:jjwt-api:${versions.jwt}"
+    implementation "io.jsonwebtoken:jjwt-impl:${versions.jwt}"
+    implementation "io.jsonwebtoken:jjwt-jackson:${versions.jwt}"
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.swagger}"
     implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
@@ -48,7 +53,6 @@ dependencies {
     testImplementation 'org.testcontainers:testcontainers'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation "org.assertj:assertj-core:${versions.assertj}"
-//    testImplementation "com.github.tomakehurst:wiremock:${versions.wiremock}"
 }
 
 dependencyManagement {

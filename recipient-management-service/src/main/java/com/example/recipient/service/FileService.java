@@ -2,6 +2,7 @@ package com.example.recipient.service;
 
 import com.example.recipient.dto.request.GeolocationRequest;
 import com.example.recipient.dto.request.RecipientRequest;
+import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Geolocation;
 import com.example.recipient.entity.Recipient;
 import com.example.recipient.exception.BulkRecipientDownloadException;
@@ -30,7 +31,7 @@ public class FileService {
     private final RecipientService recipientService;
     private final MessageSourceService message;
 
-    public Boolean bulkRegistration(MultipartFile file) {
+    public Boolean bulkRegistration(Client client, MultipartFile file) {
         Workbook workbook;
         try {
             workbook = new XSSFWorkbook(file.getInputStream());
@@ -45,13 +46,19 @@ public class FileService {
                 break;
             }
             try {
-                recipientService.register(new RecipientRequest(row.getCell(1).toString(), // name
-                        row.getCell(2).toString(), // email
-                        row.getCell(3).toString(), // phone
-                        row.getCell(4).toString(), // tg
-                        new GeolocationRequest(Double.parseDouble(row.getCell(5).toString()), // latitude
-                                Double.parseDouble(row.getCell(6).toString())  // longitude
-                        )));
+                recipientService.register(
+                        client,
+                        new RecipientRequest(
+                                row.getCell(1).toString(), // name
+                                row.getCell(2).toString(), // email
+                                row.getCell(3).toString(), // phone
+                                row.getCell(4).toString(), // tg
+                                new GeolocationRequest(
+                                        Double.parseDouble(row.getCell(5).toString()), // latitude
+                                        Double.parseDouble(row.getCell(6).toString())  // longitude
+                                )
+                        )
+                );
             } catch (RuntimeException e) {
                 error.put(row.getCell(2).toString(), e.getMessage());
             }
@@ -64,8 +71,8 @@ public class FileService {
         return true;
     }
 
-    public byte[] downloadXlsx() {
-        List<Recipient> recipients = recipientRepository.findAll();
+    public byte[] downloadXlsx(Client client) {
+        List<Recipient> recipients = recipientRepository.findAllByClient_Id(client.getId());
 
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Recipients");

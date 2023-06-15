@@ -1,10 +1,12 @@
 package com.example.recipient.controller;
 
+import com.example.recipient.entity.Client;
 import com.example.recipient.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,13 +18,18 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping("/")
-    public ResponseEntity<Boolean> bulkRegistration(@RequestPart MultipartFile file) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(fileService.bulkRegistration(file));
+    public ResponseEntity<Boolean> bulkRegistration(
+            @AuthenticationPrincipal Client client,
+            @RequestPart MultipartFile file
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(fileService.bulkRegistration(client, file));
     }
 
     @GetMapping("/")
-    public ResponseEntity<ByteArrayResource> downloadXlsx() {
-        byte[] data = fileService.downloadXlsx();
+    public ResponseEntity<ByteArrayResource> downloadXlsx(
+            @AuthenticationPrincipal Client client
+    ) {
+        byte[] data = fileService.downloadXlsx(client);
         ByteArrayResource resource = new ByteArrayResource(data);
         return ResponseEntity.ok()
                 .contentLength(data.length)

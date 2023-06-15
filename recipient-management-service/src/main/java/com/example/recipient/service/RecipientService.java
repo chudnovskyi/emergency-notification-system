@@ -2,6 +2,7 @@ package com.example.recipient.service;
 
 import com.example.recipient.dto.request.RecipientRequest;
 import com.example.recipient.dto.response.RecipientResponse;
+import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Recipient;
 import com.example.recipient.exception.RecipientNotFoundException;
 import com.example.recipient.exception.RecipientRegistrationException;
@@ -23,35 +24,37 @@ public class RecipientService {
     private final RecipientMapper mapper;
     private final MessageSourceService message;
 
-    public Long register(RecipientRequest request) {
-        if (request.email() != null && recipientRepository.findByEmail(request.email()).isPresent()) {
-            Recipient recipient = recipientRepository.findByEmail(request.email()).orElseThrow();
-            Recipient update = mapper.update(request, recipient);
-            recipientRepository.saveAndFlush(update);
-            return recipient.getId();
+    public RecipientResponse register(Client client, RecipientRequest request) {
+        Optional<Recipient> existing = recipientRepository.findByEmailAndClient_Id(request.email(), client.getId());
+        if (existing.isPresent()) {
+            return update(client, existing.get().getId(), request);
         }
 
         try {
             return Optional.of(request)
                     .map(mapper::mapToEntity)
+                    .map(client::addRecipient)
                     .map(recipientRepository::save)
-                    .map(Recipient::getId)
-                    .orElseThrow();
+                    .map(mapper::mapToResponse)
+                    .orElseThrow(() -> {
+                        throw new RecipientRegistrationException(message.getProperty("recipient.registration", request.email()));
+                    });
         } catch (DataIntegrityViolationException e) {
             throw new RecipientRegistrationException(e.getMessage());
         }
     }
 
-    public RecipientResponse receive(Long id) {
-        return recipientRepository.findById(id)
+    public RecipientResponse receive(Client client, Long recipientId) {
+        return recipientRepository.findByIdAndClient_Id(recipientId, client.getId())
                 .map(mapper::mapToResponse)
                 .orElseThrow(() -> {
-                    throw new RecipientNotFoundException(message.getProperty("recipient.not_found", id));
+                    throw new RecipientNotFoundException(message.getProperty("recipient.not_found", recipientId));
                 });
     }
 
-    public Boolean delete(Long id) {
-        return recipientRepository.findById(id)
+    public Boolean delete(Client client, Long recipientId) {
+        return recipientRepository.findByIdAndClient_Id(recipientId, client.getId())
+                .map(client::removeRecipient)
                 .map(recipient -> {
                     recipientRepository.delete(recipient);
                     return recipient;
@@ -59,13 +62,17 @@ public class RecipientService {
                 .isPresent();
     }
 
-    public RecipientResponse update(Long id, RecipientRequest request) {
-        return recipientRepository.findById(id)
-                .map(recipient -> mapper.update(request, recipient))
-                .map(recipientRepository::saveAndFlush)
-                .map(mapper::mapToResponse)
-                .orElseThrow(() -> {
-                    throw new RecipientNotFoundException(message.getProperty("recipient.not_found", id));
-                });
+    public RecipientResponse update(Client client, Long recipientId, RecipientRequest request) {
+        try {
+            return recipientRepository.findByIdAndClient_Id(recipientId, client.getId())
+                    .map(recipient -> mapper.update(request, recipient))
+                    .map(recipientRepository::saveAndFlush)
+                    .map(mapper::mapToResponse)
+                    .orElseThrow(() -> {
+                        throw new RecipientNotFoundException(message.getProperty("recipient.not_found", recipientId));
+                    });
+        } catch (DataIntegrityViolationException e) {
+            throw new RecipientRegistrationException(e.getMessage());
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.recipient.exception;
 import com.example.recipient.dto.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -27,8 +28,11 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler({
             RecipientRegistrationException.class,
+            BulkRecipientDownloadException.class,
             WorkbookCreationException.class,
-            BulkRecipientDownloadException.class
+            ClientNotFoundException.class,
+            AuthenticationException.class,
+            EmailAlreadyExists.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
         return generateDefaultErrorMessage(e, BAD_REQUEST);
