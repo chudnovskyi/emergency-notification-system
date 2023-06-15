@@ -24,7 +24,7 @@ public class Token implements BaseEntity<Long> {
     public Client client;
 
     @Enumerated(EnumType.STRING)
-    public TokenType tokenType = TokenType.BEARER;
+    public final TokenType tokenType = TokenType.BEARER;
 
     @Column(unique = true)
     public String jwt;

@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -32,7 +33,7 @@ public class FileControllerIT extends ITBase {
         );
 
         mockMvc.perform(multipart("/api/v1/files/")
-                        .file(file))
+                        .file(file).with(user(userDetails)))
                 .andExpectAll(
                         status().isCreated(),
                         content().string("true")
@@ -50,7 +51,7 @@ public class FileControllerIT extends ITBase {
         );
 
         mockMvc.perform(multipart("/api/v1/files/")
-                        .file(file))
+                        .file(file).with(user(userDetails)))
                 .andExpectAll(
                         status().isBadRequest()
                 );
@@ -58,7 +59,7 @@ public class FileControllerIT extends ITBase {
 
     @Test
     public void testFileDownload() throws Exception {
-        mockMvc.perform(get("/api/v1/files/"))
+        mockMvc.perform(get("/api/v1/files/").with(user(userDetails)))
                 .andExpectAll(
                         status().isOk(),
                         content().contentType("application/octet-stream")

@@ -8,8 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import static com.example.recipient.model.TokenType.BEARER;
-
 @Service
 @RequiredArgsConstructor
 public class TokenService {
@@ -23,7 +21,6 @@ public class TokenService {
                 Token.builder()
                         .client(client)
                         .jwt(jwt)
-                        .tokenType(BEARER)
                         .expired(false)
                         .revoked(false)
                         .build()

@@ -1,6 +1,7 @@
 package com.example.recipient.config;
 
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @ActiveProfiles("test")
 @Transactional
+@WithMockUser(username = "mock@gmail.com")
 @SpringBootTest(classes = TestApplicationRunner.class)
 public @interface IT {
 

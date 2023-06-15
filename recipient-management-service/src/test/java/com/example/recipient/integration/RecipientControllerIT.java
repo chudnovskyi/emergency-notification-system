@@ -1,8 +1,8 @@
 package com.example.recipient.integration;
 
-import com.example.recipient.config.ITBase;
 import com.example.recipient.builder.RecipientJson;
 import com.example.recipient.builder.RecipientJsonBuilder;
+import com.example.recipient.config.ITBase;
 import com.example.recipient.service.MessageSourceService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import static com.example.recipient.enums.Url.RECIPIENTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -91,22 +92,21 @@ public class RecipientControllerIT extends ITBase {
     }
 
     private Long registerSuccess(RecipientJson recipientJson) throws Exception {
-        String content = mockMvc.perform(post(RECIPIENTS.toString())
+        ResultActions resultActions = mockMvc.perform(post(RECIPIENTS.toString()).with(user(userDetails))
                         .content(recipientJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
                         status().isCreated(),
-                        jsonPath("$").isNumber()
-                )
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                        jsonPath("$.email").value(recipientJson.email()),
+                        jsonPath("$.phoneNumber").value(recipientJson.phoneNumber()),
+                        jsonPath("$.telegramId").value(recipientJson.telegramId())
+                );
 
-        return Long.valueOf(content);
+        return Long.valueOf(extractFieldFromResponse(resultActions, "id"));
     }
 
     private void registerFailure(RecipientJson recipientJson) throws Exception {
-        mockMvc.perform(post(RECIPIENTS.toString())
+        mockMvc.perform(post(RECIPIENTS.toString()).with(user(userDetails))
                         .content(recipientJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
@@ -116,7 +116,7 @@ public class RecipientControllerIT extends ITBase {
     }
 
     private String receiveSuccess(Long id, String fieldToExtract) throws Exception {
-        ResultActions resultActions = mockMvc.perform(get(RECIPIENTS.toString() + id))
+        ResultActions resultActions = mockMvc.perform(get(RECIPIENTS.toString() + id).with(user(userDetails)))
                 .andExpectAll(
                         status().isOk(),
                         content().string(not(emptyString()))
@@ -126,7 +126,7 @@ public class RecipientControllerIT extends ITBase {
     }
 
     private void receiveNotFound(Long id) throws Exception {
-        mockMvc.perform(get(RECIPIENTS.toString() + id))
+        mockMvc.perform(get(RECIPIENTS.toString() + id).with(user(userDetails)))
                 .andExpectAll(
                         status().isNotFound(),
                         jsonPath("$.message").value(message.getProperty("recipient.not_found", id))
@@ -142,7 +142,7 @@ public class RecipientControllerIT extends ITBase {
     }
 
     private void deleteAndExpect(Long id, String expected) throws Exception {
-        mockMvc.perform(delete(RECIPIENTS.toString() + id))
+        mockMvc.perform(delete(RECIPIENTS.toString() + id).with(user(userDetails)))
                 .andExpectAll(
                         status().isOk(),
                         content().string(expected)
@@ -150,7 +150,7 @@ public class RecipientControllerIT extends ITBase {
     }
 
     private void updateSuccess(Long id, RecipientJson recipientJson) throws Exception {
-        mockMvc.perform(patch(RECIPIENTS.toString() + id)
+        mockMvc.perform(patch(RECIPIENTS.toString() + id).with(user(userDetails))
                         .content(recipientJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
@@ -160,7 +160,7 @@ public class RecipientControllerIT extends ITBase {
     }
 
     private void updateNotFound(Long id, RecipientJson recipientJson) throws Exception {
-        mockMvc.perform(patch(RECIPIENTS.toString() + id)
+        mockMvc.perform(patch(RECIPIENTS.toString() + id).with(user(userDetails))
                         .content(recipientJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
