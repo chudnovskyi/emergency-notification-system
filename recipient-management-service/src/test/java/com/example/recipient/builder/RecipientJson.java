@@ -4,8 +4,9 @@ public record RecipientJson(
         String email,
         String phoneNumber,
         String telegramId
-) {
-    private static final String RECIPIENT_PATTERN_TEMPLATE = """
+) implements Product {
+
+    private static final String TEMPLATE = """
             {
                 "name": "dummy",
                 "email": %s,
@@ -18,18 +19,11 @@ public record RecipientJson(
             }
             """;
 
+    @Override
     public String toJson() {
-        String emailVal = formatVal(email);
-        String phoneVal = formatVal(phoneNumber);
-        String telegramVal = formatVal(telegramId);
-        return String.format(RECIPIENT_PATTERN_TEMPLATE, emailVal, phoneVal, telegramVal);
-    }
-
-    private String formatVal(String value) {
-        if (value != null) {
-            return "\"" + value + "\"";
-        } else {
-            return "null";
-        }
+        String emailVal = format(email);
+        String phoneVal = format(phoneNumber);
+        String telegramVal = format(telegramId);
+        return String.format(TEMPLATE, emailVal, phoneVal, telegramVal);
     }
 }

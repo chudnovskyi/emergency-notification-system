@@ -43,7 +43,7 @@ dependencies {
     implementation "org.apache.poi:poi:${versions.apache_poi}"
     implementation "org.apache.poi:poi-ooxml:${versions.apache_poi}"
 
-    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.postgresql:postgresql'
 
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"

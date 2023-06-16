@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static com.example.recipient.enums.Url.RECIPIENTS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,24 +25,24 @@ public class RecipientControllerIT extends ITBase {
     private final MockMvc mockMvc;
     private final MessageSourceService message;
 
-    private final RecipientJson firstRecipient = RecipientJsonBuilder.builder()
+    static final RecipientJson FIRST_RECIPIENT = RecipientJsonBuilder.builder()
             .email("viacheslav@gmail.com")
             .phoneNumber("+380973078623")
             .telegramId("lwantPizza")
             .build();
 
-    private final RecipientJson secondRecipient = RecipientJsonBuilder.builder()
+    static final RecipientJson SECOND_RECIPIENT = RecipientJsonBuilder.builder()
             .email("dummy_1@gmail.com")
             .phoneNumber("+123456789")
             .build();
 
-    private final RecipientJson repeatedPhoneRecipient = RecipientJsonBuilder.builder()
+    static final RecipientJson REPEATED_PHONE_RECIPIENT = RecipientJsonBuilder.builder()
             .email("dummy_2@gmail.com")
             .phoneNumber("+123456789")
             .telegramId("dummy_tg")
             .build();
 
-    private final RecipientJson repeatedEmailRecipient = RecipientJsonBuilder.builder()
+    static final RecipientJson REPEATED_EMAIL_RECIPIENT = RecipientJsonBuilder.builder()
             .email("viacheslav@gmail.com")
             .telegramId("new-tg")
             .build();
@@ -55,40 +54,40 @@ public class RecipientControllerIT extends ITBase {
 
     @Test
     public void registerTest() throws Exception {
-        Long firstRecId = registerSuccess(firstRecipient);
-        Long overwriteRecId = registerSuccess(repeatedEmailRecipient);
+        Long firstRecId = registerSuccess(FIRST_RECIPIENT);
+        Long overwriteRecId = registerSuccess(REPEATED_EMAIL_RECIPIENT);
         assertThat(firstRecId).isEqualTo(overwriteRecId);
 
         String phoneNumber = receiveSuccess(overwriteRecId, "phoneNumber");
-        assertThat(phoneNumber.equals("null") ? null : phoneNumber).isEqualTo(repeatedEmailRecipient.phoneNumber());
+        assertThat(phoneNumber.equals("null") ? null : phoneNumber).isEqualTo(REPEATED_EMAIL_RECIPIENT.phoneNumber());
         String telegramId = receiveSuccess(overwriteRecId, "telegramId");
-        assertThat(telegramId.equals("null") ? null : telegramId).isEqualTo(repeatedEmailRecipient.telegramId());
+        assertThat(telegramId.equals("null") ? null : telegramId).isEqualTo(REPEATED_EMAIL_RECIPIENT.telegramId());
 
-        registerSuccess(secondRecipient);
-        registerFailure(repeatedPhoneRecipient);
+        registerSuccess(SECOND_RECIPIENT);
+        registerFailure(REPEATED_PHONE_RECIPIENT);
     }
 
     @Test
     public void deleteTest() throws Exception {
         deleteFailure(1L);
-        Long recipientId = registerSuccess(firstRecipient);
+        Long recipientId = registerSuccess(FIRST_RECIPIENT);
         deleteSuccess(recipientId);
         receiveNotFound(recipientId);
         deleteFailure(recipientId);
-        Long newRecipientId = registerSuccess(firstRecipient);
+        Long newRecipientId = registerSuccess(FIRST_RECIPIENT);
 
         assertThat(recipientId).isNotEqualTo(newRecipientId);
     }
 
     @Test
     public void updateTest() throws Exception {
-        updateNotFound(-1L, firstRecipient);
-        Long recipientId = registerSuccess(firstRecipient);
-        updateSuccess(recipientId, secondRecipient);
+        updateNotFound(-1L, FIRST_RECIPIENT);
+        Long recipientId = registerSuccess(FIRST_RECIPIENT);
+        updateSuccess(recipientId, SECOND_RECIPIENT);
 
         String updatedEmail = receiveSuccess(recipientId, "email");
-        assertThat(updatedEmail).isNotEqualTo(firstRecipient.email());
-        assertThat(updatedEmail).isEqualTo(secondRecipient.email());
+        assertThat(updatedEmail).isNotEqualTo(FIRST_RECIPIENT.email());
+        assertThat(updatedEmail).isEqualTo(SECOND_RECIPIENT.email());
     }
 
     private Long registerSuccess(RecipientJson recipientJson) throws Exception {
@@ -159,6 +158,15 @@ public class RecipientControllerIT extends ITBase {
                 );
     }
 
+    private void updateFailure(Long id, RecipientJson recipientJson) throws Exception {
+        mockMvc.perform(patch(RECIPIENTS.toString() + id).with(user(userDetails))
+                        .content(recipientJson.toJson())
+                        .contentType(APPLICATION_JSON))
+                .andExpectAll(
+                        status().isBadRequest()
+                );
+    }
+
     private void updateNotFound(Long id, RecipientJson recipientJson) throws Exception {
         mockMvc.perform(patch(RECIPIENTS.toString() + id).with(user(userDetails))
                         .content(recipientJson.toJson())
@@ -167,16 +175,5 @@ public class RecipientControllerIT extends ITBase {
                         status().isNotFound(),
                         jsonPath("$.message").value(message.getProperty("recipient.not_found", id))
                 );
-    }
-
-    private String extractFieldFromResponse(ResultActions resultActions, String field) throws Exception {
-        return new ObjectMapper()
-                .readTree(
-                        resultActions.andReturn()
-                                .getResponse()
-                                .getContentAsString()
-                )
-                .at("/" + field)
-                .asText();
     }
 }

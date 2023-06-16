@@ -1,5 +1,6 @@
 package com.example.recipient.integration;
 
+
 import com.example.recipient.config.ITBase;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -10,11 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.example.recipient.enums.Url.RECIPIENTS;
+import static com.example.recipient.integration.RecipientControllerIT.FIRST_RECIPIENT;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
@@ -59,6 +61,16 @@ public class FileControllerIT extends ITBase {
 
     @Test
     public void testFileDownload() throws Exception {
+        mockMvc.perform(post(RECIPIENTS.toString()).with(user(userDetails))
+                        .content(FIRST_RECIPIENT.toJson())
+                        .contentType(APPLICATION_JSON))
+                .andExpectAll(
+                        status().isCreated(),
+                        jsonPath("$.email").value(FIRST_RECIPIENT.email()),
+                        jsonPath("$.phoneNumber").value(FIRST_RECIPIENT.phoneNumber()),
+                        jsonPath("$.telegramId").value(FIRST_RECIPIENT.telegramId())
+                );
+
         mockMvc.perform(get("/api/v1/files/").with(user(userDetails)))
                 .andExpectAll(
                         status().isOk(),

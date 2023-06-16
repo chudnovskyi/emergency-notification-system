@@ -1,6 +1,6 @@
 package com.example.recipient.builder;
 
-public class RecipientJsonBuilder {
+public class RecipientJsonBuilder extends Builder<RecipientJson> {
 
     private String email;
     private String phoneNumber;
@@ -25,6 +25,7 @@ public class RecipientJsonBuilder {
         return this;
     }
 
+    @Override
     public RecipientJson build() {
         return new RecipientJson(email, phoneNumber, telegramId);
     }

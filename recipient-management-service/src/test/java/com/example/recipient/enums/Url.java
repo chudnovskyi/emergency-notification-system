@@ -7,7 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Url {
     RECIPIENTS("/api/v1/recipients/"),
-    FILES("/api/v1/files/");
+    FILES("/api/v1/files/"),
+    REGISTER("/api/v1/auth/register"),
+    AUTHENTICATE("/api/v1/auth/authenticate"),
+    LOGOUT("/api/v1/auth/logout");
 
     private final String constant;
 
