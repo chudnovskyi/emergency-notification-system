@@ -36,7 +36,7 @@ public class CustomExceptionHandler {
             BulkRecipientDownloadException.class,
             WorkbookCreationException.class,
             AuthenticationException.class,
-            EmailAlreadyExists.class
+            ClientEmailAlreadyExists.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, BAD_REQUEST, request);

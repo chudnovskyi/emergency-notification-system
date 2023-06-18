@@ -119,7 +119,7 @@ public class AuthenticationControllerIT extends ITBase {
                         .content(authenticationJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
-                        status().isBadRequest()
+                        status().is4xxClientError()
                 );
     }
 

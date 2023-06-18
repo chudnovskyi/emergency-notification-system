@@ -1,0 +1,11 @@
+server:
+  port: 1001
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/emergency
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka

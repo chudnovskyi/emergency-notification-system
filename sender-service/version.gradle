@@ -1,0 +1,8 @@
+ext {
+    versions = [
+            mapstruct: '1.5.3.Final',
+            swagger  : '2.0.4',
+            wiremock : '2.16.0',
+            assertj  : '3.24.2',
+    ]
+}
