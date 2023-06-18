@@ -4,11 +4,14 @@ import com.example.recipient.dto.request.AuthenticationRequest;
 import com.example.recipient.dto.request.RegistrationRequest;
 import com.example.recipient.dto.response.AuthenticationResponse;
 import com.example.recipient.entity.Client;
+import com.example.recipient.exception.ClientBadCredentialsException;
 import com.example.recipient.exception.ClientNotFoundException;
 import com.example.recipient.exception.EmailAlreadyExists;
 import com.example.recipient.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,12 +47,18 @@ public class ClientService implements UserDetailsService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.email(),
-                        request.password()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.email(),
+                            request.password()
+                    )
+            );
+        } catch (InternalAuthenticationServiceException e) {
+            throw new ClientNotFoundException(message.getProperty("client.not_found", request.email()));
+        } catch (BadCredentialsException e) {
+            throw new ClientBadCredentialsException(message.getProperty("client.bad_cred"));
+        }
 
         Client client = loadUserByUsername(request.email());
 

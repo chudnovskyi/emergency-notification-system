@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -21,26 +22,30 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(e.getErrors(), BAD_REQUEST);
     }
 
-    @ExceptionHandler(RecipientNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(Exception e) {
-        return generateDefaultErrorMessage(e, NOT_FOUND);
+    @ExceptionHandler({
+            RecipientNotFoundException.class,
+            ClientNotFoundException.class
+    })
+    public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {
+        return generateDefaultErrorMessage(e, NOT_FOUND, request);
     }
 
     @ExceptionHandler({
             RecipientRegistrationException.class,
+            ClientBadCredentialsException.class,
             BulkRecipientDownloadException.class,
             WorkbookCreationException.class,
-            ClientNotFoundException.class,
             AuthenticationException.class,
             EmailAlreadyExists.class
     })
-    public ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
-        return generateDefaultErrorMessage(e, BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleBadRequest(Exception e, WebRequest request) {
+        return generateDefaultErrorMessage(e, BAD_REQUEST, request);
     }
 
-    private ResponseEntity<ErrorResponse> generateDefaultErrorMessage(Exception e, HttpStatus httpStatus) {
+    private ResponseEntity<ErrorResponse> generateDefaultErrorMessage(Exception e, HttpStatus httpStatus, WebRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .message(e.getMessage())
+                .description(request.getDescription(false))
                 .code(httpStatus.value())
                 .timestamp(LocalDateTime.now())
                 .build();

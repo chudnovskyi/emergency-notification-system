@@ -23,6 +23,16 @@ springdoc:
   api-docs:
     path: /recipient-management-service/api-docs
 
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+      hibernate: ERROR
+    com:
+      example:
+        recipient: DEBUG
+
 eureka:
   client:
     service-url:
