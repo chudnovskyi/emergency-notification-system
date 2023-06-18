@@ -3,20 +3,15 @@ services:
   postgres:
     image: postgres:alpine3.17
     restart: always
+    ports:
+      - '5432:5432'
     environment:
       POSTGRES_DB: emergency
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data
-    ports:
-      - '5432:5432'
     volumes:
       - db-postgres:/data
-  redis:
-    image: redis:7.2-rc-alpine3.18
-    restart: always
-    ports:
-      - '6379:6379'
 
   discovery-server:
     image: v1acheslav/discovery-server:1.0.0

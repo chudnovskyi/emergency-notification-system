@@ -2,6 +2,7 @@ package com.example.recipient.controller;
 
 import com.example.recipient.entity.Client;
 import com.example.recipient.service.FileService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping("/")
+    @Operation(summary = "bulk Recipient registration with provided XLSX")
     public ResponseEntity<Boolean> bulkRegistration(
             @AuthenticationPrincipal Client client,
             @RequestPart MultipartFile file
@@ -26,6 +28,7 @@ public class FileController {
     }
 
     @GetMapping("/")
+    @Operation(summary = "download XLSX with Recipients belonging to authorized Client")
     public ResponseEntity<ByteArrayResource> downloadXlsx(
             @AuthenticationPrincipal Client client
     ) {

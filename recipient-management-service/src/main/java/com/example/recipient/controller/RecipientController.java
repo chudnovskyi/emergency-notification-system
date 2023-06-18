@@ -4,6 +4,7 @@ import com.example.recipient.dto.request.RecipientRequest;
 import com.example.recipient.dto.response.RecipientResponse;
 import com.example.recipient.entity.Client;
 import com.example.recipient.service.RecipientService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ public class RecipientController {
     private final RecipientService recipientService;
 
     @PostMapping("/")
+    @Operation(summary = "register a Recipient")
     public ResponseEntity<RecipientResponse> register(
             @AuthenticationPrincipal Client client,
             @RequestBody RecipientRequest request
@@ -28,6 +30,7 @@ public class RecipientController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "receive Recipient information by ID")
     public ResponseEntity<RecipientResponse> receive(
             @AuthenticationPrincipal Client client,
             @PathVariable Long id
@@ -36,6 +39,7 @@ public class RecipientController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "delete a Recipient by ID")
     public ResponseEntity<Boolean> delete(
             @AuthenticationPrincipal Client client,
             @PathVariable Long id
@@ -44,6 +48,7 @@ public class RecipientController {
     }
 
     @PatchMapping("/{id}")
+    @Operation(summary = "update a Recipient by ID")
     public ResponseEntity<RecipientResponse> update(
             @AuthenticationPrincipal Client client,
             @PathVariable Long id,
