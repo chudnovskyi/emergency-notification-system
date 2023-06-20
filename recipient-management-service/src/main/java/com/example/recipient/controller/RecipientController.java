@@ -5,6 +5,7 @@ import com.example.recipient.dto.response.RecipientResponse;
 import com.example.recipient.entity.Client;
 import com.example.recipient.service.RecipientService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,7 +25,7 @@ public class RecipientController {
     @Operation(summary = "register a Recipient")
     public ResponseEntity<RecipientResponse> register(
             @AuthenticationPrincipal Client client,
-            @RequestBody RecipientRequest request
+            @RequestBody @Valid RecipientRequest request
     ) {
         return ResponseEntity.status(CREATED).body(recipientService.register(client, request));
     }
@@ -52,7 +53,7 @@ public class RecipientController {
     public ResponseEntity<RecipientResponse> update(
             @AuthenticationPrincipal Client client,
             @PathVariable Long id,
-            @RequestBody RecipientRequest request
+            @RequestBody @Valid RecipientRequest request
     ) {
         return ResponseEntity.status(OK).body(recipientService.update(client, id, request));
     }

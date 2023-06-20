@@ -5,6 +5,7 @@ ext {
             swagger   : '2.0.4',
             wiremock  : '2.16.0',
             assertj   : '3.11.1',
-            jwt       : '0.11.5'
+            jwt       : '0.11.5',
+            validator : '8.0.0.Final',
     ]
 }

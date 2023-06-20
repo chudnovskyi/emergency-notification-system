@@ -1,7 +1,6 @@
 package com.example.recipient.service;
 
 import com.example.recipient.dto.request.AuthenticationRequest;
-import com.example.recipient.dto.request.RegistrationRequest;
 import com.example.recipient.dto.response.AuthenticationResponse;
 import com.example.recipient.entity.Client;
 import com.example.recipient.exception.ClientBadCredentialsException;
@@ -31,7 +30,7 @@ public class ClientService implements UserDetailsService {
     private final JwtService jwtService;
     private final TokenService tokenService;
 
-    public Boolean register(RegistrationRequest request) {
+    public Boolean register(AuthenticationRequest request) {
         if (isClientWithGivenEmailExists(request.email())) {
             throw new ClientEmailAlreadyExists(message.getProperty("client.email.already_exists"));
         }
