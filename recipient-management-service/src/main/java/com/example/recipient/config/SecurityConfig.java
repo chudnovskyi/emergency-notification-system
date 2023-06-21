@@ -1,7 +1,9 @@
 package com.example.recipient.config;
 
+import com.example.recipient.exception.ClientNotFoundException;
 import com.example.recipient.filter.JwtAuthenticationFilter;
 import com.example.recipient.repository.ClientRepository;
+import com.example.recipient.service.MessageSourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +33,7 @@ public class SecurityConfig {
     private final ClientRepository clientRepository;
     private final LogoutHandler logoutHandler;
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final MessageSourceService message;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -41,11 +44,10 @@ public class SecurityConfig {
                     registry.requestMatchers("/api/v1/auth/**").permitAll();
                     registry.requestMatchers("/api/v1/files/**").authenticated();
                     registry.requestMatchers("/api/v1/recipients/**").authenticated();
+                    registry.requestMatchers("/api/v1/notifications/**").authenticated();
                 })
                 .authenticationProvider(authenticationProvider())
-                .sessionManagement(conf -> {
-                    conf.sessionCreationPolicy(STATELESS);
-                })
+                .sessionManagement(conf -> conf.sessionCreationPolicy(STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(conf -> {
                     conf.logoutUrl("/api/v1/auth/logout");
@@ -68,7 +70,9 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> clientRepository.findByEmail(username)
-                .orElseThrow();
+                .orElseThrow(() -> new ClientNotFoundException(
+                        message.getProperty("client.not_found", username)
+                ));
     }
 
     @Bean

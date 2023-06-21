@@ -13,7 +13,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -69,7 +68,7 @@ public class ClientService implements UserDetailsService {
     }
 
     @Override
-    public Client loadUserByUsername(String username) throws UsernameNotFoundException {
+    public Client loadUserByUsername(String username) {
         return clientRepository.findByEmail(username)
                 .orElseThrow(() -> new ClientNotFoundException(
                         message.getProperty("client.not_found", username)

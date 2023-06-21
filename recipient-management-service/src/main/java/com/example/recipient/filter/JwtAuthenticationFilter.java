@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final TokenService tokenService;
-    private final MessageSourceService message;
+    private final MessageSourceService messageSource;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 userDetails = tokenService.takeUserDetailsFromJwt(jwt);
             } catch (JwtException e) {
-                handleInvalidJwtException(response);
+                handleInvalidJwtException(response, e.getMessage());
                 return;
             }
 
@@ -71,10 +71,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authenticationToken;
     }
 
-    private void handleInvalidJwtException(HttpServletResponse response) throws IOException {
+    private void handleInvalidJwtException(HttpServletResponse response, String message) throws IOException {
         ErrorResponse errorResponse = ErrorResponse.builder()
+                .description(messageSource.getProperty("jwt.invalid"))
                 .code(HttpStatus.FORBIDDEN.value())
-                .message(message.getProperty("jwt.invalid"))
+                .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();
 

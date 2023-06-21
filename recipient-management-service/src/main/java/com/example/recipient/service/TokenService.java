@@ -2,6 +2,8 @@ package com.example.recipient.service;
 
 import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Token;
+import com.example.recipient.exception.ClientJwtNotFoundException;
+import com.example.recipient.exception.ClientNotFoundException;
 import com.example.recipient.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,6 +44,10 @@ public class TokenService {
 
     public UserDetails takeUserDetailsFromJwt(String jwt) {
         String email = jwtService.extractEmail(jwt);
-        return userDetailsService.loadUserByUsername(email);
+        try {
+            return userDetailsService.loadUserByUsername(email);
+        } catch (ClientNotFoundException e) {
+            throw new ClientJwtNotFoundException(e.getMessage());
+        }
     }
 }
