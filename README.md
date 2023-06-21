@@ -30,7 +30,7 @@
   delays.
 - [ ] **Low Latency:** The system should have low latency, ensuring that notifications are sent and received promptly to
   minimize response time during emergencies.
-- [ ] **Scalability:** The system should be able to handle a growing number of recipients and notifications without
+- [x] **Scalability:** The system should be able to handle a growing number of recipients and notifications without
   compromising performance or functionality.
 
 ## Additional Features:
@@ -38,3 +38,25 @@
 - **Email Update Guarantee:** When registering a recipient with an email address that already exists in the system, the
   existing recipient's information will be updated with the new registration details. (if there are several equal email
   addresses in xlsx file, the last appearance will always overwrite all previous)
+
+##
+
+### Scalability
+
+The system is designed to efficiently deliver notifications to a large number of users in a timely manner. To achieve
+scalability, the system employs the following logic:
+
+- `Request Partitioning:` When a client sends a request with a large list of user IDs to whom notifications need to be
+  sent, the system dynamically determines the number of instances currently running using the Eureka Discovery Server.
+  This information is then used to divide the list of user IDs into equal partitions. For example, if the
+  recipient-management-service receives a request with 1,000,000 user IDs and there are 100 instances currently
+  running, the receiving instance will divide the list into batches of 10,000 user IDs each and distribute them to all
+  available instances using Apache Kafka.
+
+- `Parallel Processing:` With multiple instances in operation, the system achieves parallel processing of user
+  notifications. This parallel processing significantly improves the overall performance and reduces the time required
+  to send notifications.
+
+- `Result Aggregation:` After processing the user IDs, the system sends the processed entities back to Kafka, but this
+  time to a different service responsible for sending out the actual notifications. This separation of processing and
+  notification delivery allows for modular and scalable architecture.
