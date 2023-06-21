@@ -36,7 +36,7 @@ public class RecipientController {
             @AuthenticationPrincipal Client client,
             @PathVariable Long id
     ) {
-        return ResponseEntity.status(OK).body(recipientService.receive(client, id));
+        return ResponseEntity.status(OK).body(recipientService.receive(client.getId(), id));
     }
 
     @DeleteMapping("/{id}")

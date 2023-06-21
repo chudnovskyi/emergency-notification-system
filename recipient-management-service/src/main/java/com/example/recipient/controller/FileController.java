@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/files")
@@ -28,8 +30,8 @@ public class FileController {
             @AuthenticationPrincipal Client client,
             @RequestPart @Valid @NotNull(message = "{file.xlsx.not_null}") MultipartFile file
     ) {
-        if (!file.getContentType().equals(MediaType.APPLICATION_OCTET_STREAM_VALUE)
-                && !file.getContentType().equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+        if (!Objects.equals(file.getContentType(), MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                && !Objects.equals(file.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
             throw new InvalidFileFormatException("Invalid file format. Only XLSX files are allowed.");
         }
 

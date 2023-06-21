@@ -20,6 +20,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     bootstrap-servers: localhost:9092
+    topics:
+      notification: notification
 
 springdoc:
   api-docs:
@@ -37,11 +39,5 @@ logging:
 
 eureka:
   client:
-    serviceUrl:
+    service-url:
       defaultZone: http://localhost:8761/eureka/
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 1
-    metadataMap: # BUG: https://github.com/codecentric/spring-boot-admin/issues/134
-      instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}

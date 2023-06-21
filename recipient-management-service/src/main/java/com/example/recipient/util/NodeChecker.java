@@ -23,13 +23,9 @@ public class NodeChecker {
     }
 
     @Scheduled(fixedDelay = 5000)
-    public void monitorService() {
+    private void monitorService() {
         if (!serviceCounts.isEmpty()) {
-            serviceCounts.replaceAll((serviceName, dummy) -> {
-                Integer amount = getAmountOfInstances(serviceName);
-                System.out.println("~~~~~ " + serviceName + ": " + amount);
-                return amount;
-            });
+            serviceCounts.replaceAll((serviceName, dummy) -> getAmountOfInstances(serviceName));
         }
     }
 

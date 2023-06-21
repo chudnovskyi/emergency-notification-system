@@ -1,6 +1,5 @@
 package com.example.recipient.config;
 
-import com.example.recipient.dto.kafka.RecipientListKafka;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.RoundRobinPartitioner;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -31,12 +30,12 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, RecipientListKafka> producerFactory() {
+    public ProducerFactory<String, ?> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<String, RecipientListKafka> kafkaTemplate() {
+    public KafkaTemplate<String, ?> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 }

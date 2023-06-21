@@ -14,8 +14,8 @@ import org.springframework.util.StopWatch;
 import java.util.Arrays;
 
 @Slf4j
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class LoggingAspect {
 
     @Pointcut("within(@org.springframework.stereotype.Repository *)" +

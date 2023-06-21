@@ -1,6 +1,6 @@
 package com.example.recipient.controller;
 
-import com.example.recipient.dto.request.TemplateIdListRequest;
+import com.example.recipient.dto.request.RecipientListRequest;
 import com.example.recipient.entity.Client;
 import com.example.recipient.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class NotificationController {
     @PostMapping("/")
     public ResponseEntity<String> publish(
             @AuthenticationPrincipal Client client,
-            @RequestBody TemplateIdListRequest request
+            @RequestBody RecipientListRequest request
     ) {
         return ResponseEntity.status(OK).body(notificationService.distributeRecipients(client, request));
     }

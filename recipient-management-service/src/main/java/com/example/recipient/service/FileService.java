@@ -48,16 +48,18 @@ public class FileService {
             try {
                 recipientService.register(
                         client,
-                        new RecipientRequest(
-                                row.getCell(1).toString(), // name
-                                row.getCell(2).toString(), // email
-                                row.getCell(3).toString(), // phone
-                                row.getCell(4).toString(), // tg
-                                new GeolocationRequest(
-                                        Double.parseDouble(row.getCell(5).toString()), // latitude
-                                        Double.parseDouble(row.getCell(6).toString())  // longitude
+                        RecipientRequest.builder()
+                                .name(row.getCell(1).toString())
+                                .email(row.getCell(2).toString())
+                                .phoneNumber(row.getCell(3).toString())
+                                .telegramId(row.getCell(4).toString())
+                                .geolocation(
+                                        GeolocationRequest.builder()
+                                                .latitude(Double.parseDouble(row.getCell(5).toString()))
+                                                .longitude(Double.parseDouble(row.getCell(6).toString()))
+                                                .build()
                                 )
-                        )
+                                .build()
                 );
             } catch (RuntimeException e) {
                 error.put(row.getCell(2).toString(), e.getMessage());

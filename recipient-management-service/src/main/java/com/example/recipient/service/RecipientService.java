@@ -36,20 +36,20 @@ public class RecipientService {
                     .map(client::addRecipient)
                     .map(recipientRepository::save)
                     .map(mapper::mapToResponse)
-                    .orElseThrow(() -> {
-                        throw new RecipientRegistrationException(message.getProperty("recipient.registration", request.email()));
-                    });
+                    .orElseThrow(() -> new RecipientRegistrationException(
+                            message.getProperty("recipient.registration", request.email())
+                    ));
         } catch (DataIntegrityViolationException e) {
             throw new RecipientRegistrationException(e.getMessage());
         }
     }
 
-    public RecipientResponse receive(Client client, Long recipientId) {
-        return recipientRepository.findByIdAndClient_Id(recipientId, client.getId())
+    public RecipientResponse receive(Long clientId, Long recipientId) {
+        return recipientRepository.findByIdAndClient_Id(recipientId, clientId)
                 .map(mapper::mapToResponse)
-                .orElseThrow(() -> {
-                    throw new RecipientNotFoundException(message.getProperty("recipient.not_found", recipientId));
-                });
+                .orElseThrow(() -> new RecipientNotFoundException(
+                        message.getProperty("recipient.not_found", recipientId)
+                ));
     }
 
     public Boolean delete(Client client, Long recipientId) {
@@ -68,9 +68,9 @@ public class RecipientService {
                     .map(recipient -> mapper.update(request, recipient))
                     .map(recipientRepository::saveAndFlush)
                     .map(mapper::mapToResponse)
-                    .orElseThrow(() -> {
-                        throw new RecipientNotFoundException(message.getProperty("recipient.not_found", recipientId));
-                    });
+                    .orElseThrow(() -> new RecipientNotFoundException(
+                            message.getProperty("recipient.not_found", recipientId)
+                    ));
         } catch (DataIntegrityViolationException e) {
             throw new RecipientRegistrationException(e.getMessage());
         }

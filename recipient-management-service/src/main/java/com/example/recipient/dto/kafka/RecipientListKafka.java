@@ -1,12 +1,12 @@
 package com.example.recipient.dto.kafka;
 
-import com.example.recipient.dto.request.TemplateRequest;
-import com.example.recipient.dto.response.RecipientResponse;
+import com.example.recipient.dto.response.TemplateResponse;
 
 import java.util.List;
 
 public record RecipientListKafka(
-        List<RecipientResponse> recipientRequests,
-        TemplateRequest templateRequest
+        List<Long> recipientIds,
+        TemplateResponse templateResponse,
+        Long clientId
 ) {
 }
