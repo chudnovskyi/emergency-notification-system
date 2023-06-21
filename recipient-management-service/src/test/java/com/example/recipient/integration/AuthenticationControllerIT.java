@@ -29,7 +29,7 @@ public class AuthenticationControllerIT extends ITBase {
     private final MessageSourceService message;
 
     static final AuthenticationJson CLIENT = AuthenticationJsonBuilder.builder()
-            .email("dummy")
+            .email("dummy@gmail.com")
             .password("password")
             .build();
 
