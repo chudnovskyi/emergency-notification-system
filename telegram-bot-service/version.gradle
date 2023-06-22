@@ -1,0 +1,5 @@
+ext {
+    versions = [
+            telegram : '6.5.0',
+    ]
+}

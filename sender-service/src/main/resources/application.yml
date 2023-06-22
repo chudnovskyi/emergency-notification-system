@@ -23,6 +23,11 @@ spring:
     topics:
       notification: notification
 
+notification:
+  services:
+    telegram:
+      token: 6080621435:AAG8hChAJ9vKPDEhiZ9_OlhZaqswZi5jk0o
+
 springdoc:
   api-docs:
     path: /sender-service/api-docs
@@ -40,4 +45,4 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka

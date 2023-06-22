@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.projectlombok:lombok'
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.swagger}"

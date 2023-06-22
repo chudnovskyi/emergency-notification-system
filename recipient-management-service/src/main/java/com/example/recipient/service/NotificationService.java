@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.recipient.util.CollectionUtils.splitList;
 
 @Service
 @RequiredArgsConstructor
@@ -35,18 +36,5 @@ public class NotificationService {
         }
 
         return "Sent!";
-    }
-
-    public static <T> List<List<T>> splitList(List<T> list, int parts) {
-        int size = list.size();
-        int partitionSize = (int) Math.ceil((double) size / parts);
-        List<List<T>> subLists = new ArrayList<>();
-
-        for (int i = 0; i < size; i += partitionSize) {
-            int end = Math.min(i + partitionSize, size);
-            subLists.add(list.subList(i, end));
-        }
-
-        return subLists;
     }
 }
