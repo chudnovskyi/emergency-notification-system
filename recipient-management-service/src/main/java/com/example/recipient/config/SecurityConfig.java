@@ -1,6 +1,6 @@
 package com.example.recipient.config;
 
-import com.example.recipient.exception.ClientNotFoundException;
+import com.example.recipient.exception.client.ClientNotFoundException;
 import com.example.recipient.filter.JwtAuthenticationFilter;
 import com.example.recipient.repository.ClientRepository;
 import com.example.recipient.service.MessageSourceService;
@@ -43,6 +43,7 @@ public class SecurityConfig {
                     registry.requestMatchers("/recipient-management-service/api-docs/**").permitAll();
                     registry.requestMatchers("/api/v1/auth/**").permitAll();
                     registry.requestMatchers("/api/v1/files/**").authenticated();
+                    registry.requestMatchers("/api/v1/templates/**").authenticated();
                     registry.requestMatchers("/api/v1/recipients/**").authenticated();
                     registry.requestMatchers("/api/v1/notifications/**").authenticated();
                 })

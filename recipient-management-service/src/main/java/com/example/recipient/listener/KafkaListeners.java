@@ -4,7 +4,7 @@ import com.example.recipient.dto.kafka.RecipientKafka;
 import com.example.recipient.dto.kafka.RecipientListKafka;
 import com.example.recipient.dto.response.RecipientResponse;
 import com.example.recipient.dto.response.TemplateResponse;
-import com.example.recipient.exception.RecipientNotFoundException;
+import com.example.recipient.exception.recipient.RecipientNotFoundException;
 import com.example.recipient.service.RecipientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

@@ -13,8 +13,6 @@ import java.util.Set;
 
 @Data
 @Builder
-@ToString(exclude = "recipients")
-@EqualsAndHashCode(exclude = "recipients")
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -22,6 +20,9 @@ import java.util.Set;
         name = "clients",
         indexes = {
                 @Index(name = "clients_idx_email", columnList = "email")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "clients_unique_email", columnNames = "email")
         }
 )
 public class Client implements UserDetails, BaseEntity<Long> {
@@ -41,14 +42,23 @@ public class Client implements UserDetails, BaseEntity<Long> {
     private String phoneNumber;
     private Address address;
 
+    @ToString.Exclude
     @Builder.Default
     @OneToMany(
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
             orphanRemoval = true
     )
-    @JoinColumn(name = "client_id")
     private Set<Recipient> recipients = new HashSet<>();
+
+    @ToString.Exclude
+    @Builder.Default
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    private Set<Template> templates = new HashSet<>();
 
     public Recipient addRecipient(Recipient recipient) {
         recipients.add(recipient);
@@ -56,10 +66,10 @@ public class Client implements UserDetails, BaseEntity<Long> {
         return recipient;
     }
 
-    public Recipient removeRecipient(Recipient recipient) {
-        recipients.remove(recipient);
-        recipient.setClient(null);
-        return recipient;
+    public Template addTemplate(Template template) {
+        templates.add(template);
+        template.setClient(this);
+        return template;
     }
 
     @Override

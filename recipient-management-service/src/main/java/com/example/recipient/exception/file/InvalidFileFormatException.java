@@ -1,4 +1,4 @@
-package com.example.recipient.exception;
+package com.example.recipient.exception.file;
 
 public class InvalidFileFormatException extends RuntimeException {
 

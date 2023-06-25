@@ -1,7 +1,7 @@
 package com.example.recipient.controller;
 
 import com.example.recipient.entity.Client;
-import com.example.recipient.exception.InvalidFileFormatException;
+import com.example.recipient.exception.file.InvalidFileFormatException;
 import com.example.recipient.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

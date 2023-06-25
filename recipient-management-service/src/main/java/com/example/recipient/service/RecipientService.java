@@ -4,19 +4,17 @@ import com.example.recipient.dto.request.RecipientRequest;
 import com.example.recipient.dto.response.RecipientResponse;
 import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Recipient;
-import com.example.recipient.exception.RecipientNotFoundException;
-import com.example.recipient.exception.RecipientRegistrationException;
+import com.example.recipient.exception.recipient.RecipientNotFoundException;
+import com.example.recipient.exception.recipient.RecipientRegistrationException;
 import com.example.recipient.mapper.RecipientMapper;
 import com.example.recipient.repository.RecipientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class RecipientService {
 
@@ -54,7 +52,6 @@ public class RecipientService {
 
     public Boolean delete(Client client, Long recipientId) {
         return recipientRepository.findByIdAndClient_Id(recipientId, client.getId())
-                .map(client::removeRecipient)
                 .map(recipient -> {
                     recipientRepository.delete(recipient);
                     return recipient;

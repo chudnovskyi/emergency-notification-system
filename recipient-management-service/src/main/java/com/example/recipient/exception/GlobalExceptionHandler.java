@@ -1,6 +1,18 @@
 package com.example.recipient.exception;
 
 import com.example.recipient.dto.response.ErrorResponse;
+import com.example.recipient.exception.client.ClientBadCredentialsException;
+import com.example.recipient.exception.client.ClientEmailAlreadyExistsException;
+import com.example.recipient.exception.client.ClientNotFoundException;
+import com.example.recipient.exception.file.BulkRecipientDownloadException;
+import com.example.recipient.exception.file.BulkRecipientRegistrationException;
+import com.example.recipient.exception.file.InvalidFileFormatException;
+import com.example.recipient.exception.file.WorkbookCreationException;
+import com.example.recipient.exception.recipient.RecipientNotFoundException;
+import com.example.recipient.exception.recipient.RecipientRegistrationException;
+import com.example.recipient.exception.template.TemplateCreationException;
+import com.example.recipient.exception.template.TemplateNotFoundException;
+import com.example.recipient.exception.template.TemplateTitleAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -14,8 +26,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -39,10 +50,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             RecipientNotFoundException.class,
-            ClientNotFoundException.class
+            ClientNotFoundException.class,
+            TemplateNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({
+            ClientEmailAlreadyExistsException.class,
+            TemplateTitleAlreadyExistsException.class
+    })
+    public ResponseEntity<ErrorResponse> handleAlreadyExists(Exception e, WebRequest request) {
+        return generateDefaultErrorMessage(e, CONFLICT, request);
     }
 
     @ExceptionHandler({
@@ -51,8 +71,8 @@ public class GlobalExceptionHandler {
             BulkRecipientDownloadException.class,
             WorkbookCreationException.class,
             AuthenticationException.class,
-            ClientEmailAlreadyExists.class,
-            InvalidFileFormatException.class
+            InvalidFileFormatException.class,
+            TemplateCreationException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, BAD_REQUEST, request);

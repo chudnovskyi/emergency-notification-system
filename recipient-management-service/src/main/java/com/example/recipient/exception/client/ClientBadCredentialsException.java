@@ -1,4 +1,4 @@
-package com.example.recipient.exception;
+package com.example.recipient.exception.client;
 
 import org.springframework.security.authentication.BadCredentialsException;
 

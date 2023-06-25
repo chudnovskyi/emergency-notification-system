@@ -15,4 +15,6 @@ public interface RecipientRepository extends JpaRepository<Recipient, Long> {
     Optional<Recipient> findByIdAndClient_Id(Long recipientId, Long clientId);
 
     List<Recipient> findAllByClient_Id(Long clientId);
+
+//    List<Recipient> findRecipientsByTemplatesId(Long templateId);
 }

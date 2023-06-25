@@ -87,7 +87,7 @@ public class AuthenticationControllerIT extends ITBase {
                         .content(authenticationJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
-                        status().isBadRequest(),
+                        status().isConflict(),
                         jsonPath("$.message").value(message.getProperty("client.email.already_exists"))
                 );
     }

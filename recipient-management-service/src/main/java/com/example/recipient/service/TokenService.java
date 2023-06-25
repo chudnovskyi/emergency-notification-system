@@ -2,8 +2,8 @@ package com.example.recipient.service;
 
 import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Token;
-import com.example.recipient.exception.ClientJwtNotFoundException;
-import com.example.recipient.exception.ClientNotFoundException;
+import com.example.recipient.exception.client.ClientJwtNotFoundException;
+import com.example.recipient.exception.client.ClientNotFoundException;
 import com.example.recipient.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

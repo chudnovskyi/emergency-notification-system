@@ -15,29 +15,21 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(
-        name = "recipients",
+        name = "templates",
         uniqueConstraints = {
-                @UniqueConstraint(name = "email_unique", columnNames = {"client_id", "email"}),
-                @UniqueConstraint(name = "telegram_id_unique", columnNames = {"client_id", "telegramId"}),
-                @UniqueConstraint(name = "phone_number_unique", columnNames = {"client_id", "phoneNumber"})
-        },
-        indexes = {
-                @Index(name = "recipients_idx_email", columnList = "email")
+                @UniqueConstraint(name = "title_unique", columnNames = {"client_id", "title"}),
         }
 )
-public class Recipient implements BaseEntity<Long> {
+public class Template implements BaseEntity<Long> { // TODO: user can respond to notification (template)
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private Geolocation geolocation;
-
     @Column(nullable = false)
-    private String email;
-    private String telegramId;
-    private String phoneNumber;
+    private String title;
+    private String content;
+    private String imageUrl; // TODO: Amazon S3
 
     @ManyToOne(
             cascade = {
@@ -60,14 +52,13 @@ public class Recipient implements BaseEntity<Long> {
     )
     @JoinTable(
             name = "template_recipient",
-            joinColumns = @JoinColumn(name = "recipient_id"),
-            inverseJoinColumns = @JoinColumn(name = "template_id")
+            joinColumns = @JoinColumn(name = "template_id"),
+            inverseJoinColumns = @JoinColumn(name = "recipient_id")
     )
-    private List<Template> templates = new ArrayList<>();
+    private List<Recipient> recipients = new ArrayList<>();
 
-    public Template addTemplate(Template template) {
-        templates.add(template);
-        return template;
+    public Recipient addRecipient(Recipient recipient) {
+        recipients.add(recipient);
+        return recipient;
     }
 }
-

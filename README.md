@@ -5,17 +5,17 @@
 
 ## Functional requirements:
 
-- [ ] **Notification Sending:** Clients should be able to send notifications to the registered recipients, alerting them
+- [x] **Notification Sending:** Clients should be able to send notifications to the registered recipients, alerting them
   about emergency situations, through different communication channels, such as:
     - [ ] email
-    - [ ] telegram
+    - [x] telegram
     - [ ] push notifications
     - [ ] SMS
 - [x] **Bulk Recipient Registration:** The system should support registering a large number of recipients at once by
   importing data from:
     - [x] .xlsx
     - [ ] .csv
-- [ ] **Notification Templates:**  The system should allow clients to create and manage pre-defined notification
+- [x] **Notification Templates:**  The system should allow clients to create and manage pre-defined notification
   templates for instantaneously sending notifications.
 - [ ] **Geolocation Sending:** The system should support sending notifications based on the recipient's geolocation to
   provide location-specific information during emergencies.

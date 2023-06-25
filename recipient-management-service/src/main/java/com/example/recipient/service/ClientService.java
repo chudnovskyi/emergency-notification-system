@@ -3,9 +3,9 @@ package com.example.recipient.service;
 import com.example.recipient.dto.request.AuthenticationRequest;
 import com.example.recipient.dto.response.AuthenticationResponse;
 import com.example.recipient.entity.Client;
-import com.example.recipient.exception.ClientBadCredentialsException;
-import com.example.recipient.exception.ClientEmailAlreadyExists;
-import com.example.recipient.exception.ClientNotFoundException;
+import com.example.recipient.exception.client.ClientBadCredentialsException;
+import com.example.recipient.exception.client.ClientEmailAlreadyExistsException;
+import com.example.recipient.exception.client.ClientNotFoundException;
 import com.example.recipient.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +31,7 @@ public class ClientService implements UserDetailsService {
 
     public Boolean register(AuthenticationRequest request) {
         if (isClientWithGivenEmailExists(request.email())) {
-            throw new ClientEmailAlreadyExists(message.getProperty("client.email.already_exists"));
+            throw new ClientEmailAlreadyExistsException(message.getProperty("client.email.already_exists"));
         }
 
         Client client = Client.builder()

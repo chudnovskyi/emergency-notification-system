@@ -30,7 +30,7 @@ public class NotificationService {
     public String distributeRecipients(Client client, RecipientListRequest request) {
         List<List<Long>> lists = splitList(request.recipientIds(), nodeChecker.getAmountOfRunningNodes(applicationName));
 
-        TemplateResponse templateResponse = new TemplateResponse("TODO"); // TODO: Template
+        TemplateResponse templateResponse = new TemplateResponse(null, null, null, null, null); // TODO: Template
         for (List<Long> list : lists) {
             kafkaTemplate.send(notificationTopic, new RecipientListKafka(list, templateResponse, client.getId()));
         }
