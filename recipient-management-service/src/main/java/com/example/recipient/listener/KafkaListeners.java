@@ -1,11 +1,11 @@
 package com.example.recipient.listener;
 
-import com.example.recipient.dto.kafka.RecipientKafka;
+import com.example.recipient.dto.kafka.NotificationKafka;
 import com.example.recipient.dto.kafka.RecipientListKafka;
-import com.example.recipient.dto.response.RecipientResponse;
-import com.example.recipient.dto.response.TemplateResponse;
-import com.example.recipient.exception.recipient.RecipientNotFoundException;
-import com.example.recipient.service.RecipientService;
+import com.example.recipient.dto.request.NotificationRequest;
+import com.example.recipient.exception.notification.NotificationMappingNotFoundException;
+import com.example.recipient.service.NotificationService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaListeners {
 
-    private final RecipientService recipientService;
-    private final KafkaTemplate<String, RecipientKafka> kafkaTemplate;
+    private final KafkaTemplate<String, NotificationKafka> kafkaTemplate;
+    private final NotificationService notificationService;
 
     @Value("${spring.kafka.topics.notification}")
     private String notificationTopic;
@@ -29,13 +29,18 @@ public class KafkaListeners {
     )
     private void listener(RecipientListKafka recipientListKafka) {
         Long clientId = recipientListKafka.clientId();
-        TemplateResponse templateResponse = recipientListKafka.templateResponse();
+        Long templateId = recipientListKafka.templateId();
         for (Long recipientId : recipientListKafka.recipientIds()) {
             try {
-                RecipientResponse recipient = recipientService.receive(clientId, recipientId);
-                kafkaTemplate.send(notificationTopic, new RecipientKafka(recipient, templateResponse));
-            } catch (RecipientNotFoundException e) {
-                // TODO: sender wasn't not found (for further re-balancing)
+                NotificationRequest notificationRequest = NotificationRequest.builder()
+                        .clientId(clientId)
+                        .templateId(templateId)
+                        .recipientId(recipientId)
+                        .build();
+                NotificationKafka notificationKafka = notificationService.createNotification(notificationRequest);
+                kafkaTemplate.send(notificationTopic, notificationKafka);
+            } catch (EntityNotFoundException e) {
+                throw new NotificationMappingNotFoundException(e.getMessage());
             }
         }
     }

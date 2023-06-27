@@ -4,7 +4,6 @@ import com.example.recipient.dto.request.RecipientListRequest;
 import com.example.recipient.dto.request.TemplateRequest;
 import com.example.recipient.dto.response.TemplateResponse;
 import com.example.recipient.entity.Client;
-import com.example.recipient.entity.Recipient;
 import com.example.recipient.entity.Template;
 import com.example.recipient.exception.template.TemplateCreationException;
 import com.example.recipient.exception.template.TemplateNotFoundException;
@@ -62,8 +61,7 @@ public class TemplateService {
                 .isPresent();
     }
 
-    public TemplateResponse addRecipients(Long clientId, RecipientListRequest request) {
-        Long templateId = request.templateId();
+    public TemplateResponse addRecipients(Long clientId, Long templateId, RecipientListRequest request) {
         Template template = templateRepository.findByIdAndClient_Id(templateId, clientId)
                 .orElseThrow(() -> new TemplateNotFoundException(
                         message.getProperty("template.not_found", templateId, clientId)
@@ -71,16 +69,33 @@ public class TemplateService {
 
         for (Long recipientId : request.recipientIds()) {
             if (templateRepository.existsByIdAndRecipientsId(templateId, recipientId)) {
-                log.warn("Recipient {} already registered for Template {}", recipientId, templateId);
+                log.warn("Recipient {} has already been registered for Template {}", recipientId, templateId);
                 continue;
             }
 
-            Optional<Recipient> maybeRecipient = recipientRepository.findByIdAndClient_Id(recipientId, clientId);
-            if (maybeRecipient.isPresent()) {
-                Recipient recipient = maybeRecipient.get();
-                template.addRecipient(recipient);
+            recipientRepository.findByIdAndClient_Id(recipientId, clientId)
+                    .ifPresentOrElse(
+                            template::addRecipient,
+                            () -> log.warn("Recipient {} not found for Client {}", recipientId, clientId)
+                    );
+            templateRepository.save(template);
+        }
+
+        return mapper.mapToResponse(template);
+    }
+
+    public TemplateResponse removeRecipients(Long clientId, Long templateId, RecipientListRequest request) {
+        Template template = templateRepository.findByIdAndClient_Id(templateId, clientId)
+                .orElseThrow(() -> new TemplateNotFoundException(
+                        message.getProperty("template.not_found", templateId, clientId)
+                ));
+
+        for (Long recipientId : request.recipientIds()) {
+            if (templateRepository.existsByIdAndRecipientsId(templateId, recipientId)) {
+                recipientRepository.findByIdAndClient_Id(recipientId, clientId)
+                        .ifPresent(template::removeRecipient);
             } else {
-                log.warn("Recipient {} not found for Client {}", recipientId, clientId);
+                log.warn("Recipient {} hasn't been registered for Template {}", recipientId, templateId);
             }
         }
 

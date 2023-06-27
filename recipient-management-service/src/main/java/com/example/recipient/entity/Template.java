@@ -1,13 +1,12 @@
 package com.example.recipient.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -41,6 +40,7 @@ public class Template implements BaseEntity<Long> { // TODO: user can respond to
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @ToString.Exclude
     @Builder.Default
     @ManyToMany(
             fetch = FetchType.LAZY,
@@ -59,6 +59,11 @@ public class Template implements BaseEntity<Long> { // TODO: user can respond to
 
     public Recipient addRecipient(Recipient recipient) {
         recipients.add(recipient);
+        return recipient;
+    }
+
+    public Recipient removeRecipient(Recipient recipient) {
+        recipients.remove(recipient);
         return recipient;
     }
 }

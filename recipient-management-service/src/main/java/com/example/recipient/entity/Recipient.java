@@ -64,10 +64,5 @@ public class Recipient implements BaseEntity<Long> {
             inverseJoinColumns = @JoinColumn(name = "template_id")
     )
     private List<Template> templates = new ArrayList<>();
-
-    public Template addTemplate(Template template) {
-        templates.add(template);
-        return template;
-    }
 }
 

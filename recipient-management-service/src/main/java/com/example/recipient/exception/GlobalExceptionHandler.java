@@ -8,10 +8,12 @@ import com.example.recipient.exception.file.BulkRecipientDownloadException;
 import com.example.recipient.exception.file.BulkRecipientRegistrationException;
 import com.example.recipient.exception.file.InvalidFileFormatException;
 import com.example.recipient.exception.file.WorkbookCreationException;
+import com.example.recipient.exception.notification.NotificationMappingNotFoundException;
 import com.example.recipient.exception.recipient.RecipientNotFoundException;
 import com.example.recipient.exception.recipient.RecipientRegistrationException;
 import com.example.recipient.exception.template.TemplateCreationException;
 import com.example.recipient.exception.template.TemplateNotFoundException;
+import com.example.recipient.exception.template.TemplateRecipientsNotFound;
 import com.example.recipient.exception.template.TemplateTitleAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +53,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             RecipientNotFoundException.class,
             ClientNotFoundException.class,
-            TemplateNotFoundException.class
+            TemplateNotFoundException.class,
+            TemplateRecipientsNotFound.class,
+            NotificationMappingNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, NOT_FOUND, request);
