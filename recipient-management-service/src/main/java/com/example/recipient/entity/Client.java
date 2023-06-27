@@ -42,6 +42,7 @@ public class Client implements UserDetails, BaseEntity<Long> {
     private String phoneNumber;
     private Address address;
 
+    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @Builder.Default
     @OneToMany(
