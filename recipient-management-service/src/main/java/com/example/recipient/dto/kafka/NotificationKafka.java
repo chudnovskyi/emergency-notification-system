@@ -7,7 +7,7 @@ import com.example.recipient.model.NotificationStatus;
 
 public record NotificationKafka(
         Long id,
-        NotificationStatus status,
+        NotificationStatus notificationStatus,
         RecipientResponse recipient,
         TemplateResponse template,
         ClientResponse client,

@@ -59,7 +59,7 @@ public class Notification implements BaseEntity<Long> {
     private Client client;
 
     @Builder.Default
-    private NotificationStatus status = PENDING;
+    private NotificationStatus notificationStatus = PENDING;
 
     @Builder.Default
     private Integer retryAttempts = 3;

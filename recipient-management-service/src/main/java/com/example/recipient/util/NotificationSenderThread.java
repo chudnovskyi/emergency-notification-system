@@ -3,7 +3,6 @@ package com.example.recipient.util;
 import com.example.recipient.dto.kafka.NotificationKafka;
 import com.example.recipient.dto.kafka.RecipientListKafka;
 import com.example.recipient.dto.request.NotificationRequest;
-import com.example.recipient.exception.notification.NotificationMappingNotFoundException;
 import com.example.recipient.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class NotificationSenderThread implements Runnable {
                 NotificationKafka notificationKafka = notificationService.createNotification(notificationRequest);
                 kafkaTemplate.send(notificationTopic, notificationKafka);
             } catch (EntityNotFoundException e) {
-                throw new NotificationMappingNotFoundException(e.getMessage());
+                // TODO: error sending not
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.recipient.model;
+package com.example.sender.model;
 
 public enum NotificationStatus {
     PENDING("P"),  // is waiting to be sent
