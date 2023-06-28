@@ -1,15 +1,17 @@
 package com.example.recipient.service;
 
-import com.example.recipient.dto.kafka.NotificationKafka;
 import com.example.recipient.dto.kafka.RecipientListKafka;
 import com.example.recipient.dto.request.NotificationRequest;
+import com.example.recipient.dto.response.NotificationResponse;
 import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Notification;
 import com.example.recipient.exception.client.ClientNotFoundException;
+import com.example.recipient.exception.notification.NotificationNotFoundException;
 import com.example.recipient.exception.recipient.RecipientNotFoundException;
 import com.example.recipient.exception.template.TemplateNotFoundException;
 import com.example.recipient.exception.template.TemplateRecipientsNotFound;
 import com.example.recipient.mapper.NotificationMapper;
+import com.example.recipient.model.NotificationStatus;
 import com.example.recipient.repository.ClientRepository;
 import com.example.recipient.repository.NotificationRepository;
 import com.example.recipient.repository.RecipientRepository;
@@ -23,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.example.recipient.model.NotificationStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -52,21 +56,15 @@ public class NotificationService {
             );
         }
 
-        List<List<Long>> lists = splitRecipientIds(recipientIds);
-
-        for (List<Long> list : lists) {
+        for (List<Long> list : splitRecipientIds(recipientIds)) {
             kafkaTemplate.send(notificationTopic, new RecipientListKafka(list, templateId, client.getId()));
         }
 
         return "Notification's been successfully sent!";
     }
 
-    public void sendNotification() {
-
-    }
-
     @Transactional
-    public NotificationKafka createNotification(NotificationRequest request) {
+    public NotificationResponse createNotification(NotificationRequest request) {
         Long templateId = request.templateId();
         Long clientId = request.clientId();
         Long recipientId = request.recipientId();
@@ -85,6 +83,37 @@ public class NotificationService {
         Notification save = notificationRepository.save(notification);
 
         return mapper.mapToResponse(save);
+    }
+
+    public NotificationResponse setNotificationAsSent(Long clientId, Long notificationId) {
+        return setNotificationStatus(clientId, notificationId, SENT);
+    }
+
+    public NotificationResponse setNotificationAsError(Long clientId, Long notificationId) {
+        return setNotificationStatus(clientId, notificationId, ERROR);
+    }
+
+    public NotificationResponse setNotificationAsCorrupted(Long clientId, Long notificationId) {
+        return setNotificationStatus(clientId, notificationId, CORRUPTED);
+    }
+
+    public NotificationResponse setNotificationAsResend(Long clientId, Long notificationId) {
+        return notificationRepository.findByIdAndClient_Id(notificationId, clientId)
+                .map(notification -> notification.setStatus(RESEND))
+                .map(mapper::mapToResponse)
+                .orElseThrow(() -> new NotificationNotFoundException(
+                        message.getProperty("notification.not_found", notificationId, clientId)
+                ));
+    }
+
+    private NotificationResponse setNotificationStatus(Long clientId, Long notificationId, NotificationStatus status) {
+        return notificationRepository.findByIdAndClient_Id(notificationId, clientId)
+                .map(Notification::decrementRetryAttempts)
+                .map(notification -> notification.setStatus(status))
+                .map(mapper::mapToResponse)
+                .orElseThrow(() -> new NotificationNotFoundException(
+                        message.getProperty("notification.not_found", notificationId, clientId)
+                ));
     }
 
     private List<List<Long>> splitRecipientIds(List<Long> list) {

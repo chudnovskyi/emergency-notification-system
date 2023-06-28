@@ -9,6 +9,7 @@ import com.example.recipient.exception.file.BulkRecipientRegistrationException;
 import com.example.recipient.exception.file.InvalidFileFormatException;
 import com.example.recipient.exception.file.WorkbookCreationException;
 import com.example.recipient.exception.notification.NotificationMappingNotFoundException;
+import com.example.recipient.exception.notification.NotificationNotFoundException;
 import com.example.recipient.exception.recipient.RecipientNotFoundException;
 import com.example.recipient.exception.recipient.RecipientRegistrationException;
 import com.example.recipient.exception.template.TemplateCreationException;
@@ -55,6 +56,7 @@ public class GlobalExceptionHandler {
             ClientNotFoundException.class,
             TemplateNotFoundException.class,
             TemplateRecipientsNotFound.class,
+            NotificationNotFoundException.class,
             NotificationMappingNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {

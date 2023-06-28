@@ -66,4 +66,14 @@ public class Notification implements BaseEntity<Long> {
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public Notification setStatus(NotificationStatus status) {
+        setNotificationStatus(status);
+        return this;
+    }
+
+    public Notification decrementRetryAttempts() {
+        setRetryAttempts(getRetryAttempts() - 1);
+        return this;
+    }
 }

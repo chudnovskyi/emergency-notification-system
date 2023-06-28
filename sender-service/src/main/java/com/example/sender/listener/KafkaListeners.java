@@ -18,7 +18,6 @@ public class KafkaListeners {
     private final ThreadPoolTaskExecutor emailSenderExecutor;
     private final ThreadPoolTaskExecutor phoneSenderExecutor;
     private final ThreadPoolTaskExecutor telegramSenderExecutor;
-    public int i = 0;
 
     @KafkaListener(
             topics = "#{ '${spring.kafka.topics.notification}' }",
@@ -44,12 +43,10 @@ public class KafkaListeners {
                 sendTelegramNotification(recipientResponse.telegramId(), message.content());
             });
         }
-        System.out.println("finish: " + i++);
     }
 
     private void sendTelegramNotification(String telegramId, String content) {
         boolean isSent = telegramAlertService.sendMessage(telegramId, content);
-        System.out.println(telegramId + ":" + isSent);
         if (isSent) {
             // TODO: rebalancer: update status as Successful
         } else {
