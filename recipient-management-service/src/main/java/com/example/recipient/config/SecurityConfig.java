@@ -45,7 +45,7 @@ public class SecurityConfig {
                     registry.requestMatchers("/api/v1/files/**").authenticated();
                     registry.requestMatchers("/api/v1/templates/**").authenticated();
                     registry.requestMatchers("/api/v1/recipients/**").authenticated();
-                    registry.requestMatchers("/api/v1/notifications/**").authenticated();
+                    registry.requestMatchers("/api/v1/notifications/**").permitAll();
                 })
                 .authenticationProvider(authenticationProvider())
                 .sessionManagement(conf -> conf.sessionCreationPolicy(STATELESS))

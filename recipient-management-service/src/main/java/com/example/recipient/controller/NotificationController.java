@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -24,19 +21,19 @@ public class NotificationController {
     @PostMapping("/{id}")
     @Operation(summary = "send a Notification to all Recipients registered for the provided Template ID")
     public ResponseEntity<String> notify(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long notificationId
     ) {
-        return ResponseEntity.status(OK).body(notificationService.distributeNotifications(client, id));
+        return ResponseEntity.status(OK).body(notificationService.distributeNotifications(clientId, notificationId));
     }
 
     @PostMapping("/{id}/sent")
     @Operation(summary = "set Notification status as successfully sent to Recipient")
     public ResponseEntity<NotificationResponse> setNotificationAsSent(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long notificationId
     ) {
-        return ResponseEntity.status(OK).body(notificationService.setNotificationAsSent(client.getId(), id));
+        return ResponseEntity.status(OK).body(notificationService.setNotificationAsSent(clientId, notificationId));
     }
 
     @PostMapping("/{id}/error")

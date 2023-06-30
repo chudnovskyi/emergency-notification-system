@@ -1,5 +1,6 @@
 package com.example.sender.listener;
 
+import com.example.sender.client.NotificationClient;
 import com.example.sender.dto.kafka.NotificationKafka;
 import com.example.sender.dto.response.TemplateHistoryResponse;
 import com.example.sender.services.telegram.TelegramAlertService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class KafkaListeners {
 
     private final TelegramAlertService telegramAlertService;
+    private final NotificationClient notificationClient;
 
     @KafkaListener(
             topics = "#{ '${spring.kafka.topics.notifications.telegram}' }",
@@ -26,7 +28,7 @@ public class KafkaListeners {
         TemplateHistoryResponse template = notificationKafka.template();
         boolean isSuccessfullySent = telegramAlertService.sendMessage(credential, template);
         if (isSuccessfullySent) {
-            // TODO: rebalancer: update status as Successful
+            notificationClient.setNotificationAsSent(notificationKafka.clientId(), notificationKafka.id());
         } else {
             // TODO: rebalancer: update status as NotFound
         }

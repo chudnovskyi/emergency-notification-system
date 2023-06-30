@@ -14,6 +14,7 @@ public record NotificationResponse(
         NotificationStatus status,
         Integer retryAttempts,
         LocalDateTime createdAt,
-        TemplateHistoryResponse template
+        TemplateHistoryResponse template,
+        Long clientId
 ) {
 }

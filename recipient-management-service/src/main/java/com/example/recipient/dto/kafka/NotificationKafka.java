@@ -13,6 +13,7 @@ public record NotificationKafka(
         NotificationStatus status,
         Integer retryAttempts,
         LocalDateTime createdAt,
-        TemplateHistoryResponse template
+        TemplateHistoryResponse template,
+        Long clientId
 ) {
 }
