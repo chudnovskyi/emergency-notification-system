@@ -3,26 +3,22 @@ package com.example.recipient.service;
 import com.example.recipient.dto.kafka.RecipientListKafka;
 import com.example.recipient.dto.request.NotificationRequest;
 import com.example.recipient.dto.response.NotificationResponse;
+import com.example.recipient.dto.response.TemplateHistoryResponse;
 import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Notification;
-import com.example.recipient.exception.client.ClientNotFoundException;
+import com.example.recipient.entity.Recipient;
 import com.example.recipient.exception.notification.NotificationNotFoundException;
-import com.example.recipient.exception.recipient.RecipientNotFoundException;
-import com.example.recipient.exception.template.TemplateNotFoundException;
 import com.example.recipient.exception.template.TemplateRecipientsNotFound;
 import com.example.recipient.mapper.NotificationMapper;
+import com.example.recipient.mapper.TemplateMapper;
 import com.example.recipient.model.NotificationStatus;
-import com.example.recipient.repository.ClientRepository;
-import com.example.recipient.repository.NotificationRepository;
-import com.example.recipient.repository.RecipientRepository;
-import com.example.recipient.repository.TemplateRepository;
+import com.example.recipient.repository.*;
 import com.example.recipient.util.CollectionUtils;
 import com.example.recipient.util.NodeChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,12 +29,12 @@ import static com.example.recipient.model.NotificationStatus.*;
 public class NotificationService {
 
     private final KafkaTemplate<String, RecipientListKafka> kafkaTemplate;
+    private final TemplateHistoryRepository templateHistoryRepository;
     private final NotificationRepository notificationRepository;
-    private final RecipientRepository recipientRepository;
     private final TemplateRepository templateRepository;
-    private final ClientRepository clientRepository;
     private final MessageSourceService message;
-    private final NotificationMapper mapper;
+    private final NotificationMapper notificationMapper;
+    private final TemplateMapper templateMapper; // TODO: extract to template service
     private final NodeChecker nodeChecker;
 
     @Value("${spring.application.name}")
@@ -47,8 +43,11 @@ public class NotificationService {
     @Value("${spring.kafka.topics.splitter}")
     private String notificationTopic;
 
+    @Value("${notifications.maxRetryAttempts}")
+    private Integer maxRetryAttempts;
+
     public String distributeNotifications(Client client, Long templateId) {
-        List<Long> recipientIds = templateRepository.findRecipientIdsByTemplateId(templateId);
+        List<Long> recipientIds = templateRepository.findRecipientIdsByTemplateIdAndClientId(templateId, client.getId());
 
         if (recipientIds.size() == 0) {
             throw new TemplateRecipientsNotFound(
@@ -56,33 +55,31 @@ public class NotificationService {
             );
         }
 
-        for (List<Long> list : splitRecipientIds(recipientIds)) {
-            kafkaTemplate.send(notificationTopic, new RecipientListKafka(list, templateId, client.getId()));
+        TemplateHistoryResponse templateHistoryResponse = templateRepository.findByIdAndClient_Id(templateId, client.getId()) // TODO: retrieve existing if the fields repeats
+                .map(templateMapper::mapToTemplateHistory)
+                .map(templateHistoryRepository::saveAndFlush)
+                .map(templateMapper::mapToTemplateHistoryResponse)
+                .orElseThrow(); // TODO
+
+        for (List<Long> recipients : splitRecipientIds(recipientIds)) {
+            kafkaTemplate.send(notificationTopic, new RecipientListKafka(recipients, templateHistoryResponse, client.getId()));
         }
 
         return "Notification's been successfully sent!";
     }
 
-    @Transactional
-    public NotificationResponse createNotification(NotificationRequest request) {
-        Long templateId = request.templateId();
-        Long clientId = request.clientId();
-        Long recipientId = request.recipientId();
+    public NotificationResponse createNotification(NotificationRequest request, Long clientId, Long recipientId) {
         Notification notification = Notification.builder()
-                .template(templateRepository.findByIdAndClient_Id(templateId, clientId).orElseThrow(
-                        () -> new TemplateNotFoundException(message.getProperty("template.not_found", templateId, clientId))
-                ))
-                .client(clientRepository.findById(clientId).orElseThrow(
-                        () -> new ClientNotFoundException(message.getProperty("client.not_found", clientId))
-                ))
-                .recipient(recipientRepository.findByIdAndClient_Id(recipientId, clientId).orElseThrow(
-                        () -> new RecipientNotFoundException(message.getProperty("recipient.not_found", recipientId))
-                ))
+                .type(request.type())
+                .credential(request.credential())
+                .recipient(Recipient.builder().id(recipientId).build())
+                .template(templateMapper.mapToTemplateHistory(request.template()))
+                .client(Client.builder().id(clientId).build())
                 .build();
 
-        Notification save = notificationRepository.save(notification);
+        notificationRepository.save(notification);
 
-        return mapper.mapToResponse(save);
+        return notificationMapper.mapToResponse(notification);
     }
 
     public NotificationResponse setNotificationAsSent(Long clientId, Long notificationId) {
@@ -93,14 +90,23 @@ public class NotificationService {
         return setNotificationStatus(clientId, notificationId, ERROR);
     }
 
-    public NotificationResponse setNotificationAsCorrupted(Long clientId, Long notificationId) {
-        return setNotificationStatus(clientId, notificationId, CORRUPTED);
+    public NotificationResponse setNotificationAsCorrupt(Long clientId, Long notificationId) {
+        return setNotificationStatus(clientId, notificationId, CORRUPT);
     }
 
-    public NotificationResponse setNotificationAsResend(Long clientId, Long notificationId) {
+    public NotificationResponse setNotificationAsResending(Long clientId, Long notificationId) {
         return notificationRepository.findByIdAndClient_Id(notificationId, clientId)
-                .map(notification -> notification.setStatus(RESEND))
-                .map(mapper::mapToResponse)
+                .map(Notification::incrementRetryAttempts)
+                .map(notification -> {
+                    if (notification.getRetryAttempts() >= maxRetryAttempts) {
+                        notification.setNotificationStatus(ERROR);
+                    } else {
+                        notification.setNotificationStatus(RESENDING);
+                    }
+                    return notification;
+                })
+                .map(notificationRepository::saveAndFlush)
+                .map(notificationMapper::mapToResponse)
                 .orElseThrow(() -> new NotificationNotFoundException(
                         message.getProperty("notification.not_found", notificationId, clientId)
                 ));
@@ -108,9 +114,9 @@ public class NotificationService {
 
     private NotificationResponse setNotificationStatus(Long clientId, Long notificationId, NotificationStatus status) {
         return notificationRepository.findByIdAndClient_Id(notificationId, clientId)
-                .map(Notification::decrementRetryAttempts)
-                .map(notification -> notification.setStatus(status))
-                .map(mapper::mapToResponse)
+                .map(notification -> notification.setNotificationStatus(status))
+                .map(notificationRepository::saveAndFlush)
+                .map(notificationMapper::mapToResponse)
                 .orElseThrow(() -> new NotificationNotFoundException(
                         message.getProperty("notification.not_found", notificationId, clientId)
                 ));

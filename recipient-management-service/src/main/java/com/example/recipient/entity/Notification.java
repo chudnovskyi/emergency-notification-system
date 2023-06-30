@@ -1,6 +1,7 @@
 package com.example.recipient.entity;
 
 import com.example.recipient.model.NotificationStatus;
+import com.example.recipient.model.NotificationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,17 @@ public class Notification implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private NotificationType type;
+
+    private String credential;
+
+    @Builder.Default
+    private NotificationStatus status = PENDING;
+    @Builder.Default
+    private Integer retryAttempts = 0;
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     @ManyToOne(
             cascade = {
                     CascadeType.DETACH,
@@ -43,9 +55,8 @@ public class Notification implements BaseEntity<Long> {
                     CascadeType.REFRESH
             }
     )
-    @JoinColumn(name = "template_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Template template;
+    @JoinColumn(name = "template_history_id")
+    private TemplateHistory template;
 
     @ManyToOne(
             cascade = {
@@ -58,22 +69,18 @@ public class Notification implements BaseEntity<Long> {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Client client;
 
-    @Builder.Default
-    private NotificationStatus notificationStatus = PENDING;
-
-    @Builder.Default
-    private Integer retryAttempts = 3;
-
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    public Notification setStatus(NotificationStatus status) {
-        setNotificationStatus(status);
+    public Notification setNotificationStatus(NotificationStatus notificationStatus) {
+        setStatus(notificationStatus);
         return this;
     }
 
-    public Notification decrementRetryAttempts() {
-        setRetryAttempts(getRetryAttempts() - 1);
+    public Notification setNotificationType(NotificationType notificationType) {
+        setType(notificationType);
+        return this;
+    }
+
+    public Notification incrementRetryAttempts() {
+        setRetryAttempts(getRetryAttempts() + 1);
         return this;
     }
 }

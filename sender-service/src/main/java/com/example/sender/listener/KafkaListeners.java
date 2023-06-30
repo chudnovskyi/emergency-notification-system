@@ -1,8 +1,7 @@
 package com.example.sender.listener;
 
 import com.example.sender.dto.kafka.NotificationKafka;
-import com.example.sender.dto.response.RecipientResponse;
-import com.example.sender.dto.response.TemplateResponse;
+import com.example.sender.dto.response.TemplateHistoryResponse;
 import com.example.sender.services.telegram.TelegramAlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -25,24 +24,24 @@ public class KafkaListeners {
             containerFactory = "listenerContainerFactory"
     )
     private void listener(NotificationKafka notificationKafka) {
-        TemplateResponse message = notificationKafka.template();
-        RecipientResponse recipientResponse = notificationKafka.recipient();
+        TemplateHistoryResponse template = notificationKafka.template();
+        String credential = notificationKafka.credential();
 
-        if (recipientResponse.email() != null) {
-            emailSenderExecutor.execute(() -> {
-                //   TODO: send email
-            });
-        }
-        if (recipientResponse.phoneNumber() != null) {
-            phoneSenderExecutor.execute(() -> {
-                //   TODO: send SMS
-            });
-        }
-        if (recipientResponse.telegramId() != null) {
-            telegramSenderExecutor.execute(() -> {
-                sendTelegramNotification(recipientResponse.telegramId(), message.content());
-            });
-        }
+//        if (recipientResponse.email() != null) {
+//            emailSenderExecutor.execute(() -> {
+//                //   TODO: send email
+//            });
+//        }
+//        if (recipientResponse.phoneNumber() != null) {
+//            phoneSenderExecutor.execute(() -> {
+//                //   TODO: send SMS
+//            });
+//        }
+//        if (recipientResponse.telegramId() != null) {
+//            telegramSenderExecutor.execute(() -> {
+//                sendTelegramNotification(recipientResponse.telegramId(), message.content());
+//            });
+//        }
     }
 
     private void sendTelegramNotification(String telegramId, String content) {

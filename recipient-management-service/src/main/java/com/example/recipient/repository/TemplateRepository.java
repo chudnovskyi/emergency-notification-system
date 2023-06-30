@@ -18,6 +18,17 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
 
     Boolean existsTemplateByClient_IdAndTitle(Long clientId, String title);
 
-    @Query("SELECT DISTINCT recipient.id FROM Template t JOIN t.recipients recipient WHERE t.id = :templateId")
-    List<Long> findRecipientIdsByTemplateId(@Param("templateId") Long templateId);
+    @Query("""
+            SELECT DISTINCT recipient.id
+            FROM Template t
+            JOIN t.recipients recipient
+            WHERE
+            t.id = :templateId
+                AND
+            t.client.id = :clientId
+            """)
+    List<Long> findRecipientIdsByTemplateIdAndClientId(
+            @Param("templateId") Long templateId,
+            @Param("clientId") Long clientId
+    );
 }

@@ -1,4 +1,4 @@
-package com.example.recipient.model;
+package com.example.sender.model;
 
 public enum NotificationType implements EnumeratedEntityField {
     EMAIL("EML"),

@@ -9,9 +9,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface NotificationMapper extends EntityMapper<Notification, NotificationRequest, NotificationResponse> {
 
-    NotificationKafka mapToKafka(Notification notification);
-
     NotificationKafka mapToKafka(NotificationResponse notificationResponse);
-
-    NotificationKafka mapToKafka(NotificationRequest notificationRequest);
 }

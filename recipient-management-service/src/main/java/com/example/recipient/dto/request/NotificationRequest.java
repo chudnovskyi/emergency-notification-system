@@ -1,12 +1,13 @@
 package com.example.recipient.dto.request;
 
+import com.example.recipient.dto.response.TemplateHistoryResponse;
+import com.example.recipient.model.NotificationType;
 import lombok.Builder;
 
 @Builder
 public record NotificationRequest(
-        Long recipientId,
-        Long templateId,
-        Long clientId,
-        Integer retryAttempts
+        NotificationType type,
+        String credential,
+        TemplateHistoryResponse template
 ) {
 }

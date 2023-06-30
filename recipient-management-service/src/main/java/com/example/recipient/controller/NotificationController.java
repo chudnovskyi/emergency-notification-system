@@ -48,21 +48,21 @@ public class NotificationController {
         return ResponseEntity.status(OK).body(notificationService.setNotificationAsError(client.getId(), id));
     }
 
-    @PostMapping("/{id}/corrupted")
+    @PostMapping("/{id}/corrupt")
     @Operation(summary = "set Notification status as impossible to sent")
-    public ResponseEntity<NotificationResponse> setNotificationAsCorrupted(
+    public ResponseEntity<NotificationResponse> setNotificationAsCorrupt(
             @AuthenticationPrincipal Client client,
             @PathVariable Long id
     ) {
-        return ResponseEntity.status(OK).body(notificationService.setNotificationAsCorrupted(client.getId(), id));
+        return ResponseEntity.status(OK).body(notificationService.setNotificationAsCorrupt(client.getId(), id));
     }
 
-    @PostMapping("/{id}/resend")
-    @Operation(summary = "set Notification status as waiting to resend")
-    public ResponseEntity<NotificationResponse> setNotificationAsResend(
+    @PostMapping("/{id}/resending")
+    @Operation(summary = "set Notification status as waiting to be resend")
+    public ResponseEntity<NotificationResponse> setNotificationAsResending(
             @AuthenticationPrincipal Client client,
             @PathVariable Long id
     ) {
-        return ResponseEntity.status(OK).body(notificationService.setNotificationAsResend(client.getId(), id));
+        return ResponseEntity.status(OK).body(notificationService.setNotificationAsResending(client.getId(), id));
     }
 }

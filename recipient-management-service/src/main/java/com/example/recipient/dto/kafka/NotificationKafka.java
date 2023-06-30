@@ -1,16 +1,18 @@
 package com.example.recipient.dto.kafka;
 
-import com.example.recipient.dto.response.ClientResponse;
-import com.example.recipient.dto.response.RecipientResponse;
-import com.example.recipient.dto.response.TemplateResponse;
+import com.example.recipient.dto.response.TemplateHistoryResponse;
 import com.example.recipient.model.NotificationStatus;
+import com.example.recipient.model.NotificationType;
+
+import java.time.LocalDateTime;
 
 public record NotificationKafka(
         Long id,
-        NotificationStatus notificationStatus,
-        RecipientResponse recipient,
-        TemplateResponse template,
-        ClientResponse client,
-        Integer retryAttempts
+        NotificationType type,
+        String credential,
+        NotificationStatus status,
+        Integer retryAttempts,
+        LocalDateTime createdAt,
+        TemplateHistoryResponse template
 ) {
 }

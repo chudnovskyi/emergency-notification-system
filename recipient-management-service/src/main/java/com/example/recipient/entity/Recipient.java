@@ -65,4 +65,3 @@ public class Recipient implements BaseEntity<Long> {
     )
     private List<Template> templates = new ArrayList<>();
 }
-

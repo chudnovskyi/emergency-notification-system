@@ -4,9 +4,13 @@ import com.example.recipient.dto.kafka.NotificationKafka;
 import com.example.recipient.dto.kafka.RecipientListKafka;
 import com.example.recipient.dto.request.NotificationRequest;
 import com.example.recipient.dto.response.NotificationResponse;
-import com.example.recipient.exception.notification.NotificationMappingNotFoundException;
+import com.example.recipient.dto.response.RecipientResponse;
+import com.example.recipient.dto.response.TemplateHistoryResponse;
+import com.example.recipient.exception.recipient.RecipientNotFoundException;
 import com.example.recipient.mapper.NotificationMapper;
+import com.example.recipient.model.NotificationType;
 import com.example.recipient.service.NotificationService;
+import com.example.recipient.service.RecipientService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,12 +20,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Supplier;
+
+import static com.example.recipient.model.NotificationType.*;
 
 @Component
 @RequiredArgsConstructor
 public class KafkaListeners {
 
     private final KafkaTemplate<String, NotificationKafka> kafkaTemplate;
+    private final RecipientService recipientService;
     private final NotificationService notificationService;
     private final NotificationMapper mapper;
 
@@ -37,48 +45,63 @@ public class KafkaListeners {
         // Create a separate thread for each RecipientListKafka and execute them concurrently
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        NotificationSenderThread thread = new NotificationSenderThread(
-                kafkaTemplate,
-                notificationService,
-                notificationTopic,
-                recipientListKafka,
-                mapper
-        );
+        Runnable runnable = () -> {
+            Long clientId = recipientListKafka.clientId();
+            TemplateHistoryResponse template = recipientListKafka.templateHistoryResponse();
 
-        executorService.execute(thread);
+            for (Long recipientId : recipientListKafka.recipientIds()) {
+                RecipientResponse response;
+                try {
+                    response = recipientService.receive(clientId, recipientId);
+                } catch (RecipientNotFoundException e) {
+                    // TODO
+                    continue;
+                }
+
+                sendNotificationByCredential(response::email, EMAIL, response, clientId, template);
+                sendNotificationByCredential(response::phoneNumber, PHONE, response, clientId, template);
+                sendNotificationByCredential(response::telegramId, TELEGRAM, response, clientId, template);
+            }
+        };
+
+        executorService.execute(runnable);
         executorService.shutdown();
     }
 
-    private record NotificationSenderThread(
-            KafkaTemplate<String, NotificationKafka> kafkaTemplate,
-            NotificationService notificationService,
-            String notificationTopic,
-            RecipientListKafka recipientListKafka,
-            NotificationMapper mapper
-    ) implements Runnable {
-
-        @Override
-        public void run() {
-            Long clientId = recipientListKafka.clientId();
-            Long templateId = recipientListKafka.templateId();
-
-            for (Long recipientId : recipientListKafka.recipientIds()) {
-                NotificationRequest notificationRequest = NotificationRequest.builder()
-                        .clientId(clientId)
-                        .templateId(templateId)
-                        .recipientId(recipientId)
-                        .build();
-
-                NotificationResponse notificationResponse;
-                try {
-                    notificationResponse = notificationService.createNotification(notificationRequest);
-                } catch (EntityNotFoundException e) {
-                    throw new NotificationMappingNotFoundException(e.getMessage());
-                }
-
-                NotificationKafka notificationKafka = mapper.mapToKafka(notificationResponse);
-                kafkaTemplate.send(notificationTopic, notificationKafka);
+    private void sendNotificationByCredential(
+            Supplier<String> supplier,
+            NotificationType type,
+            RecipientResponse response,
+            Long clientId,
+            TemplateHistoryResponse template
+    ) {
+        String credential = supplier.get();
+        if (credential != null) {
+            NotificationResponse notificationResponse;
+            try {
+                notificationResponse = notificationService.createNotification(
+                        buildNotificationRequest(type, credential, template),
+                        clientId,
+                        response.id()
+                );
+            } catch (EntityNotFoundException e) {
+                // TODO
+                return;
             }
+            NotificationKafka notificationKafka = mapper.mapToKafka(notificationResponse);
+            kafkaTemplate.send(notificationTopic, notificationKafka);
         }
+    }
+
+    private NotificationRequest buildNotificationRequest(
+            NotificationType type,
+            String credential,
+            TemplateHistoryResponse template
+    ) {
+        return NotificationRequest.builder()
+                .type(type)
+                .credential(credential)
+                .template(template)
+                .build();
     }
 }

@@ -20,6 +20,7 @@ public record RecipientRequest(
         @Size(max = 20, message = "{recipient.telegram.size}")
         String telegramId,
 
-        @Valid GeolocationRequest geolocation
+        @Valid
+        GeolocationRequest geolocation
 ) {
 }

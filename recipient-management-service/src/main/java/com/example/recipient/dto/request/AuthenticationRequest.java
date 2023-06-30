@@ -3,7 +3,9 @@ package com.example.recipient.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record AuthenticationRequest(
         @NotNull(message = "{auth.email.not_null}") @Email(message = "{auth.email.invalid}")
         String email,

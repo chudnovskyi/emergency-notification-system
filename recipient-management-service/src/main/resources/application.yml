@@ -49,3 +49,6 @@ eureka:
     metadataMap: # BUG: https://github.com/codecentric/spring-boot-admin/issues/134
       instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+notifications:
+  maxRetryAttempts: 3
