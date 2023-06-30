@@ -8,6 +8,8 @@ import lombok.Builder;
 public record NotificationRequest(
         NotificationType type,
         String credential,
-        TemplateHistoryResponse template
+        TemplateHistoryResponse template,
+        Long recipientId,
+        Long clientId
 ) {
 }

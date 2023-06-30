@@ -76,7 +76,7 @@ public class KafkaListeners {
     private void sendNotificationByCredential(
             Supplier<String> supplier,
             NotificationType type,
-            RecipientResponse response,
+            RecipientResponse recipientResponse,
             Long clientId,
             TemplateHistoryResponse template,
             String topic
@@ -86,9 +86,13 @@ public class KafkaListeners {
             NotificationResponse notificationResponse;
             try {
                 notificationResponse = notificationService.createNotification(
-                        buildNotificationRequest(type, credential, template),
-                        clientId,
-                        response.id()
+                        NotificationRequest.builder()
+                                .type(type)
+                                .credential(credential)
+                                .template(template)
+                                .recipientId(recipientResponse.id())
+                                .clientId(clientId)
+                                .build()
                 );
             } catch (EntityNotFoundException e) {
                 // TODO
@@ -97,17 +101,5 @@ public class KafkaListeners {
             NotificationKafka notificationKafka = mapper.mapToKafka(notificationResponse);
             kafkaTemplate.send(topic, notificationKafka);
         }
-    }
-
-    private NotificationRequest buildNotificationRequest(
-            NotificationType type,
-            String credential,
-            TemplateHistoryResponse template
-    ) {
-        return NotificationRequest.builder()
-                .type(type)
-                .credential(credential)
-                .template(template)
-                .build();
     }
 }

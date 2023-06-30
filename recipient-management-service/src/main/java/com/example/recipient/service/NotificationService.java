@@ -21,6 +21,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.recipient.model.NotificationStatus.*;
 
@@ -68,18 +69,12 @@ public class NotificationService {
         return "Notification's been successfully sent!";
     }
 
-    public NotificationResponse createNotification(NotificationRequest request, Long clientId, Long recipientId) {
-        Notification notification = Notification.builder()
-                .type(request.type())
-                .credential(request.credential())
-                .recipient(Recipient.builder().id(recipientId).build())
-                .template(templateMapper.mapToTemplateHistory(request.template()))
-                .client(Client.builder().id(clientId).build())
-                .build();
-
-        notificationRepository.save(notification);
-
-        return notificationMapper.mapToResponse(notification);
+    public NotificationResponse createNotification(NotificationRequest request) {
+        return Optional.of(request)
+                .map(notificationMapper::mapToEntity)
+                .map(notificationRepository::saveAndFlush)
+                .map(notificationMapper::mapToResponse)
+                .orElseThrow();
     }
 
     public NotificationResponse setNotificationAsSent(Long clientId, Long notificationId) {
