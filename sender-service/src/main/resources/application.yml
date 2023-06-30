@@ -21,7 +21,10 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     topics:
-      notification: notification
+      notifications:
+        email: email-notification
+        phone: phone-notification
+        telegram: telegram-notification
 
 notification:
   services:

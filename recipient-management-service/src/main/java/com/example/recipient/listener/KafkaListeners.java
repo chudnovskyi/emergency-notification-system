@@ -33,8 +33,14 @@ public class KafkaListeners {
     private final NotificationService notificationService;
     private final NotificationMapper mapper;
 
-    @Value("${spring.kafka.topics.notification}")
-    private String notificationTopic;
+    @Value("${spring.kafka.topics.notifications.email}")
+    private String emailTopic;
+
+    @Value("${spring.kafka.topics.notifications.phone}")
+    private String phoneTopic;
+
+    @Value("${spring.kafka.topics.notifications.telegram}")
+    private String telegramTopic;
 
     @KafkaListener(
             topics = "#{ '${spring.kafka.topics.splitter}' }",
@@ -42,7 +48,6 @@ public class KafkaListeners {
             containerFactory = "listenerContainerFactory"
     )
     private void listener(RecipientListKafka recipientListKafka) {
-        // Create a separate thread for each RecipientListKafka and execute them concurrently
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         Runnable runnable = () -> {
@@ -58,9 +63,9 @@ public class KafkaListeners {
                     continue;
                 }
 
-                sendNotificationByCredential(response::email, EMAIL, response, clientId, template);
-                sendNotificationByCredential(response::phoneNumber, PHONE, response, clientId, template);
-                sendNotificationByCredential(response::telegramId, TELEGRAM, response, clientId, template);
+                sendNotificationByCredential(response::email, EMAIL, response, clientId, template, emailTopic);
+                sendNotificationByCredential(response::phoneNumber, PHONE, response, clientId, template, phoneTopic);
+                sendNotificationByCredential(response::telegramId, TELEGRAM, response, clientId, template, telegramTopic);
             }
         };
 
@@ -73,7 +78,8 @@ public class KafkaListeners {
             NotificationType type,
             RecipientResponse response,
             Long clientId,
-            TemplateHistoryResponse template
+            TemplateHistoryResponse template,
+            String topic
     ) {
         String credential = supplier.get();
         if (credential != null) {
@@ -89,7 +95,7 @@ public class KafkaListeners {
                 return;
             }
             NotificationKafka notificationKafka = mapper.mapToKafka(notificationResponse);
-            kafkaTemplate.send(notificationTopic, notificationKafka);
+            kafkaTemplate.send(topic, notificationKafka);
         }
     }
 

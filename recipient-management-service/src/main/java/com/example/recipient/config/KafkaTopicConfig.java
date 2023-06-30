@@ -12,15 +12,35 @@ public class KafkaTopicConfig {
     @Value("${spring.kafka.partitions}")
     private Integer partitions;
 
-    @Value("${spring.kafka.topics.notification}")
-    private String notificationTopic;
+    @Value("${spring.kafka.topics.notifications.email}")
+    private String emailTopic;
+
+    @Value("${spring.kafka.topics.notifications.phone}")
+    private String phoneTopic;
+
+    @Value("${spring.kafka.topics.notifications.telegram}")
+    private String telegramTopic;
 
     @Value("${spring.kafka.topics.splitter}")
     private String splitterTopic;
 
     @Bean
-    public NewTopic notificationTopic() {
-        return TopicBuilder.name(notificationTopic)
+    public NewTopic emailNotificationTopic() {
+        return TopicBuilder.name(emailTopic)
+                .partitions(partitions)
+                .build();
+    }
+
+    @Bean
+    public NewTopic phoneNotificationTopic() {
+        return TopicBuilder.name(phoneTopic)
+                .partitions(partitions)
+                .build();
+    }
+
+    @Bean
+    public NewTopic telegramNotificationTopic() {
+        return TopicBuilder.name(telegramTopic)
                 .partitions(partitions)
                 .build();
     }

@@ -22,7 +22,10 @@ spring:
     bootstrap-servers: localhost:9092
     partitions: 10
     topics:
-      notification: notification
+      notifications:
+        email: email-notification
+        phone: phone-notification
+        telegram: telegram-notification
       splitter: recipient-list-splitter
 
 springdoc:

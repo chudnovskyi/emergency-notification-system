@@ -4,52 +4,61 @@ import com.example.sender.dto.kafka.NotificationKafka;
 import com.example.sender.dto.response.TemplateHistoryResponse;
 import com.example.sender.services.telegram.TelegramAlertService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class KafkaListeners {
 
     private final TelegramAlertService telegramAlertService;
 
-    private final ThreadPoolTaskExecutor emailSenderExecutor;
-    private final ThreadPoolTaskExecutor phoneSenderExecutor;
-    private final ThreadPoolTaskExecutor telegramSenderExecutor;
-
     @KafkaListener(
-            topics = "#{ '${spring.kafka.topics.notification}' }",
+            topics = "#{ '${spring.kafka.topics.notifications.telegram}' }",
             groupId = "emergency",
             containerFactory = "listenerContainerFactory"
     )
-    private void listener(NotificationKafka notificationKafka) {
-        TemplateHistoryResponse template = notificationKafka.template();
+    private void telegramNotificationListener(NotificationKafka notificationKafka) {
+        log(notificationKafka);
         String credential = notificationKafka.credential();
-
-//        if (recipientResponse.email() != null) {
-//            emailSenderExecutor.execute(() -> {
-//                //   TODO: send email
-//            });
-//        }
-//        if (recipientResponse.phoneNumber() != null) {
-//            phoneSenderExecutor.execute(() -> {
-//                //   TODO: send SMS
-//            });
-//        }
-//        if (recipientResponse.telegramId() != null) {
-//            telegramSenderExecutor.execute(() -> {
-//                sendTelegramNotification(recipientResponse.telegramId(), message.content());
-//            });
-//        }
-    }
-
-    private void sendTelegramNotification(String telegramId, String content) {
-        boolean isSent = telegramAlertService.sendMessage(telegramId, content);
-        if (isSent) {
+        TemplateHistoryResponse template = notificationKafka.template();
+        boolean isSuccessfullySent = telegramAlertService.sendMessage(credential, template);
+        if (isSuccessfullySent) {
             // TODO: rebalancer: update status as Successful
         } else {
             // TODO: rebalancer: update status as NotFound
         }
+    }
+
+    @KafkaListener(
+            topics = "#{ '${spring.kafka.topics.notifications.email}' }",
+            groupId = "emergency",
+            containerFactory = "listenerContainerFactory"
+    )
+    private void emailNotificationListener(NotificationKafka notificationKafka) {
+        log(notificationKafka);
+        // TODO
+    }
+
+    @KafkaListener(
+            topics = "#{ '${spring.kafka.topics.notifications.phone}' }",
+            groupId = "emergency",
+            containerFactory = "listenerContainerFactory"
+    )
+    private void phoneNotificationListener(NotificationKafka notificationKafka) {
+        log(notificationKafka);
+        // TODO
+    }
+
+    private void log(NotificationKafka notificationKafka) { // TODO: AOP
+        log.info(
+                "Sending {} notification to `{}`, status={}, retryAttempts={}",
+                notificationKafka.type(),
+                notificationKafka.credential(),
+                notificationKafka.status(),
+                notificationKafka.retryAttempts()
+        );
     }
 }
