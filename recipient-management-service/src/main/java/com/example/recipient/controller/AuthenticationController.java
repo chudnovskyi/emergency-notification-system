@@ -21,13 +21,17 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @Operation(summary = "register new Client with given credentials")
-    public ResponseEntity<Boolean> register(@RequestBody @Valid AuthenticationRequest request) {
+    public ResponseEntity<Boolean> register(
+            @RequestBody @Valid AuthenticationRequest request
+    ) {
         return ResponseEntity.ok(clientService.register(request));
     }
 
     @PostMapping("/authenticate")
     @Operation(summary = "authenticate Client with existing credentials")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> authenticate(
+            @RequestBody @Valid AuthenticationRequest request
+    ) {
         return ResponseEntity.ok(clientService.authenticate(request));
     }
 }

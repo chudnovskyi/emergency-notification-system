@@ -10,8 +10,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface TemplateMapper extends EntityMapper<Template, TemplateRequest, TemplateResponse> {
 
-    TemplateHistory mapToTemplateHistory(TemplateHistoryResponse template);
-
     TemplateHistory mapToTemplateHistory(Template template);
 
     TemplateHistoryResponse mapToTemplateHistoryResponse(TemplateHistory templateHistory);

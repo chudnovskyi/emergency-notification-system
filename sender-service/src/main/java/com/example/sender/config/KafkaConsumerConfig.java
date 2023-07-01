@@ -1,6 +1,5 @@
 package com.example.sender.config;
 
-
 import com.example.sender.dto.kafka.NotificationKafka;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;

@@ -1,6 +1,5 @@
 package com.example.recipient.config;
 
-
 import com.example.recipient.dto.kafka.RecipientListKafka;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;

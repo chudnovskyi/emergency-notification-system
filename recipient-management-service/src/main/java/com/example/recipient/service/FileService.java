@@ -2,7 +2,6 @@ package com.example.recipient.service;
 
 import com.example.recipient.dto.request.GeolocationRequest;
 import com.example.recipient.dto.request.RecipientRequest;
-import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Geolocation;
 import com.example.recipient.entity.Recipient;
 import com.example.recipient.exception.file.BulkRecipientDownloadException;
@@ -31,7 +30,7 @@ public class FileService {
     private final RecipientService recipientService;
     private final MessageSourceService message;
 
-    public Boolean bulkRegistration(Client client, MultipartFile file) {
+    public Boolean bulkRegistration(Long clientId, MultipartFile file) {
         Workbook workbook;
         try {
             workbook = new XSSFWorkbook(file.getInputStream());
@@ -47,7 +46,7 @@ public class FileService {
             }
             try {
                 recipientService.register(
-                        client,
+                        clientId,
                         RecipientRequest.builder()
                                 .name(row.getCell(1).toString())
                                 .email(row.getCell(2).toString())
@@ -73,8 +72,8 @@ public class FileService {
         return true;
     }
 
-    public byte[] downloadXlsx(Client client) {
-        List<Recipient> recipients = recipientRepository.findAllByClient_Id(client.getId());
+    public byte[] downloadXlsx(Long clientId) {
+        List<Recipient> recipients = recipientRepository.findAllByClient_Id(clientId);
 
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Recipients");

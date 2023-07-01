@@ -1,6 +1,5 @@
 package com.example.recipient.controller;
 
-import com.example.recipient.entity.Client;
 import com.example.recipient.exception.file.InvalidFileFormatException;
 import com.example.recipient.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +10,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +25,7 @@ public class FileController {
     @PostMapping("/")
     @Operation(summary = "bulk Recipient registration with provided XLSX")
     public ResponseEntity<Boolean> bulkRegistration(
-            @AuthenticationPrincipal Client client,
+            @RequestHeader Long clientId,
             @RequestPart @Valid @NotNull(message = "{file.xlsx.not_null}") MultipartFile file
     ) {
         if (!Objects.equals(file.getContentType(), MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -35,15 +33,15 @@ public class FileController {
             throw new InvalidFileFormatException("Invalid file format. Only XLSX files are allowed.");
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(fileService.bulkRegistration(client, file));
+        return ResponseEntity.status(HttpStatus.CREATED).body(fileService.bulkRegistration(clientId, file));
     }
 
     @GetMapping("/")
     @Operation(summary = "download XLSX with Recipients belonging to authorized Client")
     public ResponseEntity<ByteArrayResource> downloadXlsx(
-            @AuthenticationPrincipal Client client
+            @RequestHeader Long clientId
     ) {
-        byte[] data = fileService.downloadXlsx(client);
+        byte[] data = fileService.downloadXlsx(clientId);
         ByteArrayResource resource = new ByteArrayResource(data);
         return ResponseEntity.ok()
                 .contentLength(data.length)

@@ -3,6 +3,7 @@ rootProject.name = 'emergency-notification-system'
 include 'recipient-management-service'
 include 'sender-service'
 include 'telegram-bot-service'
+include 'security-service'
 
 include 'api-gateway'
 include 'discovery-server'

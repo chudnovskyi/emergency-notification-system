@@ -3,13 +3,11 @@ package com.example.recipient.controller;
 import com.example.recipient.dto.request.RecipientListRequest;
 import com.example.recipient.dto.request.TemplateRequest;
 import com.example.recipient.dto.response.TemplateResponse;
-import com.example.recipient.entity.Client;
 import com.example.recipient.service.TemplateService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -25,47 +23,47 @@ public class TemplateController {
     @PostMapping("/")
     @Operation(summary = "create a Template")
     public ResponseEntity<TemplateResponse> create(
-            @AuthenticationPrincipal Client client,
+            @RequestHeader Long clientId,
             @RequestBody @Valid TemplateRequest request
     ) {
-        return ResponseEntity.status(CREATED).body(templateService.create(client, request));
+        return ResponseEntity.status(CREATED).body(templateService.create(clientId, request));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "get a Template by ID")
     public ResponseEntity<TemplateResponse> get(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long templateId
     ) {
-        return ResponseEntity.status(OK).body(templateService.get(client.getId(), id));
+        return ResponseEntity.status(OK).body(templateService.get(clientId, templateId));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "delete a Template by ID")
     public ResponseEntity<Boolean> delete(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long templateId
     ) {
-        return ResponseEntity.status(OK).body(templateService.delete(client, id));
+        return ResponseEntity.status(OK).body(templateService.delete(clientId, templateId));
     }
 
     @PostMapping("/{id}/recipients")
     @Operation(summary = "add Recipients to a Template")
     public ResponseEntity<TemplateResponse> addRecipients(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id,
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long templateId,
             @RequestBody @Valid RecipientListRequest request
     ) {
-        return ResponseEntity.status(CREATED).body(templateService.addRecipients(client.getId(), id, request));
+        return ResponseEntity.status(CREATED).body(templateService.addRecipients(clientId, templateId, request));
     }
 
     @DeleteMapping("/{id}/recipients")
     @Operation(summary = "remove Recipients from a Template")
     public ResponseEntity<TemplateResponse> removeRecipients(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id,
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long templateId,
             @RequestBody @Valid RecipientListRequest request
     ) {
-        return ResponseEntity.status(CREATED).body(templateService.removeRecipients(client.getId(), id, request));
+        return ResponseEntity.status(CREATED).body(templateService.removeRecipients(clientId, templateId, request));
     }
 }

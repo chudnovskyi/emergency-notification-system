@@ -3,7 +3,6 @@ package com.example.recipient.service;
 import com.example.recipient.dto.request.RecipientListRequest;
 import com.example.recipient.dto.request.TemplateRequest;
 import com.example.recipient.dto.response.TemplateResponse;
-import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Template;
 import com.example.recipient.exception.template.TemplateCreationException;
 import com.example.recipient.exception.template.TemplateNotFoundException;
@@ -27,20 +26,20 @@ public class TemplateService {
     private final MessageSourceService message;
     private final TemplateMapper mapper;
 
-    public TemplateResponse create(Client client, TemplateRequest request) {
-        if (templateRepository.existsTemplateByClient_IdAndTitle(client.getId(), request.title())) {
+    public TemplateResponse create(Long clientId, TemplateRequest request) {
+        if (templateRepository.existsTemplateByClient_IdAndTitle(clientId, request.title())) {
             throw new TemplateTitleAlreadyExistsException(
-                    message.getProperty("template.title_already_exists", request.title(), client.getId())
+                    message.getProperty("template.title_already_exists", request.title(), clientId)
             );
         }
 
         return Optional.of(request)
                 .map(mapper::mapToEntity)
-                .map(client::addTemplate)
+//                .map(client::addTemplate) TODO
                 .map(templateRepository::save)
                 .map(mapper::mapToResponse)
                 .orElseThrow(() -> new TemplateCreationException(
-                        message.getProperty("template.creation", client.getId())
+                        message.getProperty("template.creation", clientId)
                 ));
     }
 
@@ -52,8 +51,8 @@ public class TemplateService {
                 ));
     }
 
-    public Boolean delete(Client client, Long templateId) {
-        return templateRepository.findByIdAndClient_Id(templateId, client.getId())
+    public Boolean delete(Long clientId, Long templateId) {
+        return templateRepository.findByIdAndClient_Id(templateId, clientId)
                 .map(template -> {
                     templateRepository.delete(template);
                     return template;

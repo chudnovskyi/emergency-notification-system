@@ -1,12 +1,10 @@
 package com.example.recipient.controller;
 
 import com.example.recipient.dto.response.NotificationResponse;
-import com.example.recipient.entity.Client;
 import com.example.recipient.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -39,27 +37,27 @@ public class NotificationController {
     @PostMapping("/{id}/error")
     @Operation(summary = "set Notification status as error ")
     public ResponseEntity<NotificationResponse> setNotificationAsError(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long notificationId
     ) {
-        return ResponseEntity.status(OK).body(notificationService.setNotificationAsError(client.getId(), id));
+        return ResponseEntity.status(OK).body(notificationService.setNotificationAsError(clientId, notificationId));
     }
 
     @PostMapping("/{id}/corrupt")
     @Operation(summary = "set Notification status as impossible to sent")
     public ResponseEntity<NotificationResponse> setNotificationAsCorrupt(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long notificationId
     ) {
-        return ResponseEntity.status(OK).body(notificationService.setNotificationAsCorrupt(client.getId(), id));
+        return ResponseEntity.status(OK).body(notificationService.setNotificationAsCorrupt(clientId, notificationId));
     }
 
     @PostMapping("/{id}/resending")
     @Operation(summary = "set Notification status as waiting to be resend")
     public ResponseEntity<NotificationResponse> setNotificationAsResending(
-            @AuthenticationPrincipal Client client,
-            @PathVariable Long id
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long notificationId
     ) {
-        return ResponseEntity.status(OK).body(notificationService.setNotificationAsResending(client.getId(), id));
+        return ResponseEntity.status(OK).body(notificationService.setNotificationAsResending(clientId, notificationId));
     }
 }

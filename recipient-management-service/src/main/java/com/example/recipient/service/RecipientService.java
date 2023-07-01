@@ -2,7 +2,6 @@ package com.example.recipient.service;
 
 import com.example.recipient.dto.request.RecipientRequest;
 import com.example.recipient.dto.response.RecipientResponse;
-import com.example.recipient.entity.Client;
 import com.example.recipient.entity.Recipient;
 import com.example.recipient.exception.recipient.RecipientNotFoundException;
 import com.example.recipient.exception.recipient.RecipientRegistrationException;
@@ -22,16 +21,16 @@ public class RecipientService {
     private final RecipientMapper mapper;
     private final MessageSourceService message;
 
-    public RecipientResponse register(Client client, RecipientRequest request) {
-        Optional<Recipient> existing = recipientRepository.findByEmailAndClient_Id(request.email(), client.getId());
+    public RecipientResponse register(Long clientId, RecipientRequest request) {
+        Optional<Recipient> existing = recipientRepository.findByEmailAndClient_Id(request.email(), clientId);
         if (existing.isPresent()) {
-            return update(client, existing.get().getId(), request);
+            return update(clientId, existing.get().getId(), request);
         }
 
         try {
             return Optional.of(request)
                     .map(mapper::mapToEntity)
-                    .map(client::addRecipient)
+//                    .map(client::addRecipient) TODO
                     .map(recipientRepository::save)
                     .map(mapper::mapToResponse)
                     .orElseThrow(() -> new RecipientRegistrationException(
@@ -50,8 +49,8 @@ public class RecipientService {
                 ));
     }
 
-    public Boolean delete(Client client, Long recipientId) {
-        return recipientRepository.findByIdAndClient_Id(recipientId, client.getId())
+    public Boolean delete(Long clientId, Long recipientId) {
+        return recipientRepository.findByIdAndClient_Id(recipientId, clientId)
                 .map(recipient -> {
                     recipientRepository.delete(recipient);
                     return recipient;
@@ -59,9 +58,9 @@ public class RecipientService {
                 .isPresent();
     }
 
-    public RecipientResponse update(Client client, Long recipientId, RecipientRequest request) {
+    public RecipientResponse update(Long clientId, Long recipientId, RecipientRequest request) {
         try {
-            return recipientRepository.findByIdAndClient_Id(recipientId, client.getId())
+            return recipientRepository.findByIdAndClient_Id(recipientId, clientId)
                     .map(recipient -> mapper.update(request, recipient))
                     .map(recipientRepository::saveAndFlush)
                     .map(mapper::mapToResponse)

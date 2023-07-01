@@ -30,7 +30,7 @@ public class KafkaListeners {
         if (isSuccessfullySent) {
             notificationClient.setNotificationAsSent(notificationKafka.clientId(), notificationKafka.id());
         } else {
-            // TODO: rebalancer: update status as NotFound
+            // TODO: rebalancer: update status as RESENDING
         }
     }
 
