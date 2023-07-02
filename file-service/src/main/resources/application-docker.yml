@@ -1,0 +1,7 @@
+server:
+  port: 1005
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka

@@ -5,6 +5,7 @@ include 'security-service'
 include 'template-service'
 include 'recipient-service'
 include 'notification-service'
+include 'file-service'
 
 include 'api-gateway'
 include 'discovery-server'

@@ -1,8 +1,8 @@
-package com.example.notification.service;
+package com.example.file.service;
 
-import com.example.notification.exception.file.BulkRecipientDownloadException;
-import com.example.notification.exception.file.BulkRecipientRegistrationException;
-import com.example.notification.exception.file.WorkbookCreationException;
+import com.example.file.exception.file.BulkRecipientDownloadException;
+import com.example.file.exception.file.BulkRecipientRegistrationException;
+import com.example.file.exception.file.WorkbookCreationException;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;

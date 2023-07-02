@@ -10,7 +10,7 @@ spring:
         - id: notification-service
           uri: lb://NOTIFICATION-SERVICE
           predicates:
-            - Path=/api/v1/files/**,/api/v1/notifications/**
+            - Path=/api/v1/notifications/**
           filters:
             - Authentication
         - id: notification-service-docs
@@ -47,6 +47,15 @@ spring:
           predicates:
             - Path=/recipient-service/api-docs/**
 
+        - id: file-service
+          uri: lb://FILE-SERVICE
+          predicates:
+            - Path=/api/v1/files/**
+        - id: file-service-docs
+          uri: lb://FILE-SERVICE
+          predicates:
+            - Path=/file-service/api-docs/**
+
 # http://localhost:8080/webjars/swagger-ui/index.html
 springdoc:
   api-docs:
@@ -54,14 +63,16 @@ springdoc:
   swagger-ui:
     url: http://localhost:8080/v3/api-docs
     urls:
-      - name: recipient-management-service
-        url: /recipient-management-service/api-docs
+      - name: notification-service
+        url: /notification-service/api-docs
       - name: security-service
         url: /security-service/api-docs
       - name: template-service
         url: /template-service/api-docs
       - name: recipient-service
         url: /recipient-service/api-docs
+      - name: file-service
+        url: /file-service/api-docs
 
 eureka:
   client:

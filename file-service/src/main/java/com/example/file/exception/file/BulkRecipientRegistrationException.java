@@ -1,4 +1,4 @@
-package com.example.notification.exception.file;
+package com.example.file.exception.file;
 
 import lombok.Getter;
 

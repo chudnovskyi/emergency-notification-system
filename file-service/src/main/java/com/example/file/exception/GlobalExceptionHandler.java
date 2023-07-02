@@ -1,8 +1,10 @@
-package com.example.notification.exception;
+package com.example.file.exception;
 
-import com.example.notification.dto.response.ErrorResponse;
-import com.example.notification.exception.notification.NotificationMappingNotFoundException;
-import com.example.notification.exception.notification.NotificationNotFoundException;
+import com.example.file.dto.ErrorResponse;
+import com.example.file.exception.file.BulkRecipientDownloadException;
+import com.example.file.exception.file.BulkRecipientRegistrationException;
+import com.example.file.exception.file.InvalidFileFormatException;
+import com.example.file.exception.file.WorkbookCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,12 +34,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, BAD_REQUEST);
     }
 
+    @ExceptionHandler(BulkRecipientRegistrationException.class)
+    public ResponseEntity<Map<String, String>> handleBulkRecipientRegistrationException(BulkRecipientRegistrationException e) {
+        return new ResponseEntity<>(e.getErrors(), BAD_REQUEST);
+    }
+
     @ExceptionHandler({
-            NotificationNotFoundException.class,
-            NotificationMappingNotFoundException.class
+            BulkRecipientDownloadException.class,
+            WorkbookCreationException.class,
+            InvalidFileFormatException.class,
     })
-    public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {
-        return generateDefaultErrorMessage(e, NOT_FOUND, request);
+    public ResponseEntity<ErrorResponse> handleBadRequest(Exception e, WebRequest request) {
+        return generateDefaultErrorMessage(e, BAD_REQUEST, request);
     }
 
     private ResponseEntity<ErrorResponse> generateDefaultErrorMessage(Exception e, HttpStatus httpStatus, WebRequest request) {
