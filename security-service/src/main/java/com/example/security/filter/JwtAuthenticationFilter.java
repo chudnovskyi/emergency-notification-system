@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (tokenService.isTokenValid(jwt) != null) {
+            if (tokenService.isTokenValid(jwt)) {
                 UsernamePasswordAuthenticationToken authenticationToken = createAuthenticationToken(userDetails, request);
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(authenticationToken);

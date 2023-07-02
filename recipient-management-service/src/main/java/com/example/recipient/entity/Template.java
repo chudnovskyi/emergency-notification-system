@@ -47,6 +47,11 @@ public class Template implements BaseEntity<Long> {
     )
     private List<Recipient> recipients = new ArrayList<>();
 
+    public Template addClient(Long clientId) {
+        setClientId(clientId);
+        return this;
+    }
+
     public Recipient addRecipient(Recipient recipient) {
         recipients.add(recipient);
         return recipient;

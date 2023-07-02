@@ -30,6 +30,7 @@ public class RecipientService {
         try {
             return Optional.of(request)
                     .map(mapper::mapToEntity)
+                    .map(recipient -> recipient.addClient(clientId))
                     .map(recipientRepository::save)
                     .map(mapper::mapToResponse)
                     .orElseThrow(() -> new RecipientRegistrationException(

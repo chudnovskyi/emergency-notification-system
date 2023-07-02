@@ -35,6 +35,7 @@ public class TemplateService {
 
         return Optional.of(request)
                 .map(mapper::mapToEntity)
+                .map(template -> template.addClient(clientId))
                 .map(templateRepository::save)
                 .map(mapper::mapToResponse)
                 .orElseThrow(() -> new TemplateCreationException(

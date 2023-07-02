@@ -41,7 +41,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/security-service/api-docs/**").permitAll();
-                    registry.requestMatchers("/api/v1/auth/**").permitAll();
+                    registry.requestMatchers("/api/v1/auth/register").permitAll();
+                    registry.requestMatchers("/api/v1/auth/authenticate").permitAll();
+                    registry.requestMatchers("/api/v1/auth/validate").authenticated();
                 })
                 .authenticationProvider(authenticationProvider())
                 .sessionManagement(conf -> conf.sessionCreationPolicy(STATELESS))

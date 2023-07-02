@@ -18,10 +18,17 @@ public class TemplateHistory implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long clientId;
+
     @Column(nullable = false)
     private String title;
 
     private String content;
 
     private String imageUrl;
+
+    public TemplateHistory addClient(Long clientId) {
+        setClientId(clientId);
+        return this;
+    }
 }

@@ -10,12 +10,22 @@ spring:
         - id: recipient-management-service
           uri: lb://RECIPIENT-MANAGEMENT-SERVICE
           predicates:
-            - Path=/recipient-management-service/api-docs/**,/api/v1/files/**,/api/v1/notifications/**,/api/v1/recipients/**,/api/v1/templates/**
+            - Path=/api/v1/files/**,/api/v1/notifications/**,/api/v1/recipients/**,/api/v1/templates/**
+          filters:
+            - Authentication
+        - id: recipient-management-service-docs
+          uri: lb://RECIPIENT-MANAGEMENT-SERVICE
+          predicates:
+            - Path=/recipient-management-service/api-docs/**
 
         - id: security-service
           uri: lb://SECURITY-SERVICE
           predicates:
-            - Path=/security-service/api-docs/**,/api/v1/auth/**
+            - Path=/api/v1/auth/**
+        - id: security-service-docs
+          uri: lb://SECURITY-SERVICE
+          predicates:
+            - Path=/security-service/api-docs/**
 
 # http://localhost:8080/webjars/swagger-ui/index.html
 springdoc:
@@ -33,3 +43,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+urls:
+  validate: http://localhost:8080/api/v1/auth/validate

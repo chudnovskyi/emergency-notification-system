@@ -2,12 +2,13 @@ package com.example.security.controller;
 
 import com.example.security.dto.request.AuthenticationRequest;
 import com.example.security.dto.response.AuthenticationResponse;
+import com.example.security.entity.Client;
 import com.example.security.service.ClientService;
-import com.example.security.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final ClientService clientService;
-    private final TokenService tokenService;
 
     @PostMapping("/register")
     @Operation(summary = "register new Client with given credentials")
@@ -34,11 +34,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(clientService.authenticate(request));
     }
 
-    @GetMapping("/validate/{jwt}")
+    @GetMapping("/validate")
     @Operation(summary = "validate given JWT and return Client ID")
     public ResponseEntity<Long> isTokenValid(
-            @PathVariable("jwt") String jwtToken
+            @AuthenticationPrincipal Client client
     ) {
-        return ResponseEntity.ok(tokenService.isTokenValid(jwtToken));
+        return ResponseEntity.ok(client.getId());
     }
 }

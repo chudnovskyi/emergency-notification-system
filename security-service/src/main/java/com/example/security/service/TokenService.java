@@ -27,12 +27,14 @@ public class TokenService {
         tokenRepository.findByClient_Id(client.getId()).ifPresent(tokenRepository::delete);
     }
 
-    public Long isTokenValid(String jwtToken) {
+    public boolean isTokenValid(String jwtToken) {
         Client client = takeUserDetailsFromJwt(jwtToken);
-        boolean isTokenValid = tokenRepository.findByJwt(jwtToken).map(token -> !token.isExpired() && !token.isRevoked()).orElse(false);
+        boolean isTokenValid = tokenRepository.findByJwt(jwtToken)
+                .map(token -> !token.isExpired() && !token.isRevoked())
+                .orElse(false);
 
         if (isTokenValid && jwtService.isJwtValid(jwtToken, client)) {
-            return client.getId();
+            return true;
         } else {
             throw new InvalidTokenException(message.getProperty("jwt.invalid"));
         }

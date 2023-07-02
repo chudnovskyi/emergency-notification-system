@@ -58,6 +58,7 @@ public class NotificationService {
 
         TemplateHistoryResponse templateHistoryResponse = templateRepository.findByIdAndClientId(templateId, clientId) // TODO: retrieve existing if the fields repeats
                 .map(templateMapper::mapToTemplateHistory)
+                .map(templateHistory -> templateHistory.addClient(clientId))
                 .map(templateHistoryRepository::saveAndFlush)
                 .map(templateMapper::mapToTemplateHistoryResponse)
                 .orElseThrow(); // TODO

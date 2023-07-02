@@ -27,6 +27,5 @@ public interface NotificationMapper extends EntityMapper<Notification, Notificat
     Notification mapToEntity(NotificationRequest request);
 
     @Override
-    @Mapping(target = "clientId", expression = "java(notification.getClient().getId())")
     NotificationResponse mapToResponse(Notification notification);
 }

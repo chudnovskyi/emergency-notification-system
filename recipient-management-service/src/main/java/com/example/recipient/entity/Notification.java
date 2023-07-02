@@ -74,4 +74,9 @@ public class Notification implements BaseEntity<Long> {
         setRetryAttempts(getRetryAttempts() + 1);
         return this;
     }
+
+    public Notification addClient(Long clientId) {
+        setClientId(clientId);
+        return this;
+    }
 }
