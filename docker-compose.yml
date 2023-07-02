@@ -1,17 +1,17 @@
 version: '3.8'
 services:
-  postgres:
+  notification-service-postgres:
     image: postgres:alpine3.17
     restart: always
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_DB: emergency
+      POSTGRES_DB: notification
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data
     volumes:
-      - db-postgres:/data
+      - db-postgres-notification:/data
 
   security-service-postgres:
     image: postgres:alpine3.17
@@ -38,6 +38,19 @@ services:
       PGDATA: /data
     volumes:
       - db-postgres-template:/data
+
+  recipient-service-postgres:
+    image: postgres:alpine3.17
+    restart: always
+    ports:
+      - '5435:5432'
+    environment:
+      POSTGRES_DB: recipient
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data
+    volumes:
+      - db-postgres-recipient:/data
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
@@ -82,3 +95,5 @@ volumes:
   db-postgres: { }
   db-postgres-security: { }
   db-postgres-template: { }
+  db-postgres-recipient: { }
+  db-postgres-notification: { }

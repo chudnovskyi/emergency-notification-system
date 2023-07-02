@@ -7,16 +7,16 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: recipient-management-service
-          uri: lb://RECIPIENT-MANAGEMENT-SERVICE
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
           predicates:
-            - Path=/api/v1/files/**,/api/v1/notifications/**,/api/v1/recipients/**
+            - Path=/api/v1/files/**,/api/v1/notifications/**
           filters:
             - Authentication
-        - id: recipient-management-service-docs
-          uri: lb://RECIPIENT-MANAGEMENT-SERVICE
+        - id: notification-service-docs
+          uri: lb://NOTIFICATION-SERVICE
           predicates:
-            - Path=/recipient-management-service/api-docs/**
+            - Path=/notification-service/api-docs/**
 
         - id: template-service
           uri: lb://TEMPLATE-SERVICE
@@ -24,7 +24,7 @@ spring:
             - Path=/api/v1/templates/**
           filters:
             - Authentication
-        - id: template-service
+        - id: template-service-docs
           uri: lb://TEMPLATE-SERVICE
           predicates:
             - Path=/template-service/api-docs/**
@@ -37,6 +37,15 @@ spring:
           uri: lb://SECURITY-SERVICE
           predicates:
             - Path=/security-service/api-docs/**
+
+        - id: recipient-service
+          uri: lb://RECIPIENT-SERVICE
+          predicates:
+            - Path=/api/v1/recipients/**
+        - id: recipient-service-docs
+          uri: lb://RECIPIENT-SERVICE
+          predicates:
+            - Path=/recipient-service/api-docs/**
 
 # http://localhost:8080/webjars/swagger-ui/index.html
 springdoc:
@@ -51,6 +60,8 @@ springdoc:
         url: /security-service/api-docs
       - name: template-service
         url: /template-service/api-docs
+      - name: recipient-service
+        url: /recipient-service/api-docs
 
 eureka:
   client:
