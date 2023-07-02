@@ -17,9 +17,9 @@ import java.util.List;
 @Table(
         name = "recipients",
         uniqueConstraints = {
-                @UniqueConstraint(name = "email_unique", columnNames = {"client_id", "email"}),
-                @UniqueConstraint(name = "telegram_id_unique", columnNames = {"client_id", "telegramId"}),
-                @UniqueConstraint(name = "phone_number_unique", columnNames = {"client_id", "phoneNumber"})
+                @UniqueConstraint(name = "recipients_unq_clientId-email", columnNames = {"clientId", "email"}),
+                @UniqueConstraint(name = "recipients_unq_clientId-telegramId", columnNames = {"clientId", "telegramId"}),
+                @UniqueConstraint(name = "recipients_unq_clientId-phoneNumber", columnNames = {"clientId", "phoneNumber"})
         },
         indexes = {
                 @Index(name = "recipients_idx_email", columnList = "email")
@@ -31,6 +31,8 @@ public class Recipient implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long clientId;
+
     private String name;
     private Geolocation geolocation;
 
@@ -38,16 +40,6 @@ public class Recipient implements BaseEntity<Long> {
     private String email;
     private String telegramId;
     private String phoneNumber;
-
-    @ManyToOne(
-            cascade = {
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
-            }
-    )
-    @JoinColumn(name = "client_id")
-    private Client client;
 
     @Builder.Default
     @ManyToMany(

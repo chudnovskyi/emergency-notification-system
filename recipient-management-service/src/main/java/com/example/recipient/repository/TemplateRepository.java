@@ -12,11 +12,11 @@ import java.util.Optional;
 @Repository
 public interface TemplateRepository extends JpaRepository<Template, Long> {
 
-    Optional<Template> findByIdAndClient_Id(Long templateId, Long clientId);
+    Optional<Template> findByIdAndClientId(Long templateId, Long clientId);
 
     Boolean existsByIdAndRecipientsId(Long templateId, Long recipientId);
 
-    Boolean existsTemplateByClient_IdAndTitle(Long clientId, String title);
+    Boolean existsTemplateByClientIdAndTitle(Long clientId, String title);
 
     @Query("""
             SELECT DISTINCT recipient.id
@@ -25,7 +25,7 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
             WHERE
             t.id = :templateId
                 AND
-            t.client.id = :clientId
+            t.clientId = :clientId
             """)
     List<Long> findRecipientIdsByTemplateIdAndClientId(
             @Param("templateId") Long templateId,

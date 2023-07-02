@@ -26,6 +26,8 @@ public class Notification implements BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long clientId;
+
     private NotificationType type;
 
     private String credential;
@@ -57,17 +59,6 @@ public class Notification implements BaseEntity<Long> {
     )
     @JoinColumn(name = "template_history_id")
     private TemplateHistory template;
-
-    @ManyToOne(
-            cascade = {
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
-            }
-    )
-    @JoinColumn(name = "client_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Client client;
 
     public Notification setNotificationStatus(NotificationStatus notificationStatus) {
         setStatus(notificationStatus);

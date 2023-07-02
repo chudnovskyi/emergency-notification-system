@@ -35,7 +35,7 @@ public class NotificationService {
     private final TemplateRepository templateRepository;
     private final MessageSourceService message;
     private final NotificationMapper notificationMapper;
-    private final TemplateMapper templateMapper; // TODO: extract to template service
+    private final TemplateMapper templateMapper;
     private final NodeChecker nodeChecker;
 
     @Value("${spring.application.name}")
@@ -56,7 +56,7 @@ public class NotificationService {
             );
         }
 
-        TemplateHistoryResponse templateHistoryResponse = templateRepository.findByIdAndClient_Id(templateId, clientId) // TODO: retrieve existing if the fields repeats
+        TemplateHistoryResponse templateHistoryResponse = templateRepository.findByIdAndClientId(templateId, clientId) // TODO: retrieve existing if the fields repeats
                 .map(templateMapper::mapToTemplateHistory)
                 .map(templateHistoryRepository::saveAndFlush)
                 .map(templateMapper::mapToTemplateHistoryResponse)
@@ -90,7 +90,7 @@ public class NotificationService {
     }
 
     public NotificationResponse setNotificationAsResending(Long clientId, Long notificationId) {
-        return notificationRepository.findByIdAndClient_Id(notificationId, clientId)
+        return notificationRepository.findByIdAndClientId(notificationId, clientId)
                 .map(Notification::incrementRetryAttempts)
                 .map(notification -> {
                     if (notification.getRetryAttempts() >= maxRetryAttempts) {
@@ -108,7 +108,7 @@ public class NotificationService {
     }
 
     private NotificationResponse setNotificationStatus(Long clientId, Long notificationId, NotificationStatus status) {
-        return notificationRepository.findByIdAndClient_Id(notificationId, clientId)
+        return notificationRepository.findByIdAndClientId(notificationId, clientId)
                 .map(notification -> notification.setNotificationStatus(status))
                 .map(notificationRepository::saveAndFlush)
                 .map(notificationMapper::mapToResponse)

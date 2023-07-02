@@ -10,11 +10,9 @@ import java.util.Optional;
 @Repository
 public interface RecipientRepository extends JpaRepository<Recipient, Long> {
 
-    Optional<Recipient> findByEmailAndClient_Id(String email, Long clientId);
+    Optional<Recipient> findByEmailAndClientId(String email, Long clientId);
 
-    Optional<Recipient> findByIdAndClient_Id(Long recipientId, Long clientId);
+    Optional<Recipient> findByIdAndClientId(Long recipientId, Long clientId);
 
-    List<Recipient> findAllByClient_Id(Long clientId);
-
-//    List<Recipient> findRecipientsByTemplatesId(Long templateId);
+    List<Recipient> findAllByClientId(Long clientId);
 }

@@ -73,7 +73,7 @@ public class FileService {
     }
 
     public byte[] downloadXlsx(Long clientId) {
-        List<Recipient> recipients = recipientRepository.findAllByClient_Id(clientId);
+        List<Recipient> recipients = recipientRepository.findAllByClientId(clientId);
 
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Recipients");

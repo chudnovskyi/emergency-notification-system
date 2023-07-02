@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -16,29 +14,21 @@ import java.util.Set;
 @Table(
         name = "templates",
         uniqueConstraints = {
-                @UniqueConstraint(name = "title_unique", columnNames = {"client_id", "title"}),
+                @UniqueConstraint(name = "templates_unq_clientId-title", columnNames = {"clientId", "title"}),
         }
 )
-public class Template implements BaseEntity<Long> { // TODO: user can respond to notification (template)
+public class Template implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long clientId;
+
     @Column(nullable = false)
     private String title;
     private String content;
     private String imageUrl; // TODO: Amazon S3
-
-    @ManyToOne(
-            cascade = {
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
-            }
-    )
-    @JoinColumn(name = "client_id")
-    private Client client;
 
     @ToString.Exclude
     @Builder.Default

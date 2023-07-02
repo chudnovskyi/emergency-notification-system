@@ -1,6 +1,5 @@
 package com.example.recipient.config;
 
-import com.example.recipient.entity.Client;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;

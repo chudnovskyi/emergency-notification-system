@@ -13,6 +13,19 @@ services:
     volumes:
       - db-postgres:/data
 
+  security-service-postgres:
+    image: postgres:alpine3.17
+    restart: always
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_DB: security
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data
+    volumes:
+      - db-postgres-security:/data
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     container_name: zookeeper
@@ -36,31 +49,22 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
-  discovery-server:
-    image: v1acheslav/discovery-server:1.0.0
-    restart: always
-    ports:
-      - '8761:8761'
-
-  api-gateway:
-    image: v1acheslav/api-gateway:1.0.0
-    restart: always
-    ports:
-      - '8080:8080'
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - discovery-server
-
-  recipient-management-service:
-    image: v1acheslav/recipient-management-service:1.0.0
-    restart: always
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - discovery-server
-      - api-gateway
-      - postgres
+#  discovery-server:
+#    image: v1acheslav/discovery-server:1.0.0
+#    restart: always
+#    ports:
+#      - '8761:8761'
+#
+#  api-gateway:
+#    image: v1acheslav/api-gateway:1.0.0
+#    restart: always
+#    ports:
+#      - '8080:8080'
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      - discovery-server
 
 volumes:
   db-postgres: { }
+  db-postgres-security: { }
