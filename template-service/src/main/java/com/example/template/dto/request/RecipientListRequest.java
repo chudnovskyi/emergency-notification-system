@@ -1,4 +1,4 @@
-package com.example.recipient.dto.request;
+package com.example.template.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;

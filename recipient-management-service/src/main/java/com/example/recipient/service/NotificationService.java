@@ -6,13 +6,9 @@ import com.example.recipient.dto.response.NotificationResponse;
 import com.example.recipient.dto.response.TemplateHistoryResponse;
 import com.example.recipient.entity.Notification;
 import com.example.recipient.exception.notification.NotificationNotFoundException;
-import com.example.recipient.exception.template.TemplateRecipientsNotFound;
 import com.example.recipient.mapper.NotificationMapper;
-import com.example.recipient.mapper.TemplateMapper;
 import com.example.recipient.model.NotificationStatus;
 import com.example.recipient.repository.NotificationRepository;
-import com.example.recipient.repository.TemplateHistoryRepository;
-import com.example.recipient.repository.TemplateRepository;
 import com.example.recipient.util.CollectionUtils;
 import com.example.recipient.util.NodeChecker;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +26,9 @@ import static com.example.recipient.model.NotificationStatus.*;
 public class NotificationService {
 
     private final KafkaTemplate<String, RecipientListKafka> kafkaTemplate;
-    private final TemplateHistoryRepository templateHistoryRepository;
     private final NotificationRepository notificationRepository;
-    private final TemplateRepository templateRepository;
     private final MessageSourceService message;
     private final NotificationMapper notificationMapper;
-    private final TemplateMapper templateMapper;
     private final NodeChecker nodeChecker;
 
     @Value("${spring.application.name}")
@@ -48,25 +41,25 @@ public class NotificationService {
     private Integer maxRetryAttempts;
 
     public String distributeNotifications(Long clientId, Long templateId) {
-        List<Long> recipientIds = templateRepository.findRecipientIdsByTemplateIdAndClientId(templateId, clientId);
-
-        if (recipientIds.size() == 0) {
-            throw new TemplateRecipientsNotFound(
-                    message.getProperty("template.recipients.not_found", templateId, clientId)
-            );
-        }
-
-        TemplateHistoryResponse templateHistoryResponse = templateRepository.findByIdAndClientId(templateId, clientId) // TODO: retrieve existing if the fields repeats
-                .map(templateMapper::mapToTemplateHistory)
-                .map(templateHistory -> templateHistory.addClient(clientId))
-                .map(templateHistoryRepository::saveAndFlush)
-                .map(templateMapper::mapToTemplateHistoryResponse)
-                .orElseThrow(); // TODO
-
-        for (List<Long> recipients : splitRecipientIds(recipientIds)) {
-            kafkaTemplate.send(notificationTopic, new RecipientListKafka(recipients, templateHistoryResponse, clientId));
-        }
-
+//        List<Long> recipientIds = templateRepository.findRecipientIdsByTemplateIdAndClientId(templateId, clientId);
+//
+//        if (recipientIds.size() == 0) {
+//            throw new TemplateRecipientsNotFound(
+//                    message.getProperty("template.recipients.not_found", templateId, clientId)
+//            );
+//        }
+//
+//        TemplateHistoryResponse templateHistoryResponse = templateRepository.findByIdAndClientId(templateId, clientId) // TODO: retrieve existing if the fields repeats
+//                .map(templateMapper::mapToTemplateHistory)
+//                .map(templateHistory -> templateHistory.addClient(clientId))
+//                .map(templateHistoryRepository::saveAndFlush)
+//                .map(templateMapper::mapToTemplateHistoryResponse)
+//                .orElseThrow(); // TODO
+//
+//        for (List<Long> recipients : splitRecipientIds(recipientIds)) {
+//            kafkaTemplate.send(notificationTopic, new RecipientListKafka(recipients, templateHistoryResponse, clientId));
+//        }
+//
         return "Notification's been successfully sent!";
     }
 

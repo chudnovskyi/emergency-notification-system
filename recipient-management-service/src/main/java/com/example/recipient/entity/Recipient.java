@@ -41,21 +41,21 @@ public class Recipient implements BaseEntity<Long> {
     private String telegramId;
     private String phoneNumber;
 
-    @Builder.Default
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
-            }
-    )
-    @JoinTable(
-            name = "template_recipient",
-            joinColumns = @JoinColumn(name = "recipient_id"),
-            inverseJoinColumns = @JoinColumn(name = "template_id")
-    )
-    private List<Template> templates = new ArrayList<>();
+//    @Builder.Default
+//    @ManyToMany(
+//            fetch = FetchType.LAZY,
+//            cascade = {
+//                    CascadeType.DETACH,
+//                    CascadeType.MERGE,
+//                    CascadeType.REFRESH
+//            }
+//    )
+//    @JoinTable(
+//            name = "template_recipient",
+//            joinColumns = @JoinColumn(name = "recipient_id"),
+//            inverseJoinColumns = @JoinColumn(name = "template_id")
+//    )
+//    private List<Template> templates = new ArrayList<>();
 
     public Recipient addClient(Long clientId) {
         setClientId(clientId);

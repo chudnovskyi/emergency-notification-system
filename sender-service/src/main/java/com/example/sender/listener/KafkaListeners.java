@@ -30,7 +30,7 @@ public class KafkaListeners {
         if (isSuccessfullySent) {
             notificationClient.setNotificationAsSent(notificationKafka.clientId(), notificationKafka.id());
         } else {
-            // TODO: rebalancer: update status as RESENDING
+            notificationClient.setNotificationAsResending(notificationKafka.clientId(), notificationKafka.id());
         }
     }
 
@@ -41,6 +41,7 @@ public class KafkaListeners {
     )
     private void emailNotificationListener(NotificationKafka notificationKafka) {
         log(notificationKafka);
+        notificationClient.setNotificationAsCorrupt(notificationKafka.clientId(), notificationKafka.id());
         // TODO
     }
 
@@ -51,10 +52,11 @@ public class KafkaListeners {
     )
     private void phoneNotificationListener(NotificationKafka notificationKafka) {
         log(notificationKafka);
+        notificationClient.setNotificationAsCorrupt(notificationKafka.clientId(), notificationKafka.id());
         // TODO
     }
 
-    private void log(NotificationKafka notificationKafka) { // TODO: AOP
+    private void log(NotificationKafka notificationKafka) { // TODO: AOP logging
         log.info(
                 "Sending {} notification to `{}`, status={}, retryAttempts={}",
                 notificationKafka.type(),

@@ -15,4 +15,16 @@ public interface NotificationClient {
             @RequestHeader Long clientId,
             @PathVariable("id") Long notificationId
     );
+
+    @PostMapping(value = "/api/v1/notifications/{id}/resending")
+    ResponseEntity<NotificationResponse> setNotificationAsResending(
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long notificationId
+    );
+
+    @PostMapping(value = "/api/v1/notifications/{id}/corrupt")
+    ResponseEntity<NotificationResponse> setNotificationAsCorrupt(
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long notificationId
+    );
 }

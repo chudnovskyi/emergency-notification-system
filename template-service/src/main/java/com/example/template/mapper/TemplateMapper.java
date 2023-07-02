@@ -1,10 +1,10 @@
-package com.example.recipient.mapper;
+package com.example.template.mapper;
 
-import com.example.recipient.dto.request.TemplateRequest;
-import com.example.recipient.dto.response.TemplateHistoryResponse;
-import com.example.recipient.dto.response.TemplateResponse;
-import com.example.recipient.entity.Template;
-import com.example.recipient.entity.TemplateHistory;
+import com.example.template.dto.request.TemplateRequest;
+import com.example.template.dto.response.TemplateHistoryResponse;
+import com.example.template.dto.response.TemplateResponse;
+import com.example.template.entity.Template;
+import com.example.template.entity.TemplateHistory;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

@@ -1,9 +1,9 @@
-package com.example.recipient.controller;
+package com.example.template.controller;
 
-import com.example.recipient.dto.request.RecipientListRequest;
-import com.example.recipient.dto.request.TemplateRequest;
-import com.example.recipient.dto.response.TemplateResponse;
-import com.example.recipient.service.TemplateService;
+import com.example.template.dto.request.RecipientListRequest;
+import com.example.template.dto.request.TemplateRequest;
+import com.example.template.dto.response.TemplateResponse;
+import com.example.template.service.TemplateService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.example.recipient.exception.template;
+package com.example.template.exception.template;
 
 public class TemplateCreationException extends RuntimeException {
 

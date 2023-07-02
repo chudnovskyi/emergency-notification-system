@@ -1,15 +1,14 @@
-package com.example.recipient.service;
+package com.example.template.service;
 
-import com.example.recipient.dto.request.RecipientListRequest;
-import com.example.recipient.dto.request.TemplateRequest;
-import com.example.recipient.dto.response.TemplateResponse;
-import com.example.recipient.entity.Template;
-import com.example.recipient.exception.template.TemplateCreationException;
-import com.example.recipient.exception.template.TemplateNotFoundException;
-import com.example.recipient.exception.template.TemplateTitleAlreadyExistsException;
-import com.example.recipient.mapper.TemplateMapper;
-import com.example.recipient.repository.RecipientRepository;
-import com.example.recipient.repository.TemplateRepository;
+import com.example.template.dto.request.RecipientListRequest;
+import com.example.template.dto.request.TemplateRequest;
+import com.example.template.dto.response.TemplateResponse;
+import com.example.template.entity.Template;
+import com.example.template.exception.template.TemplateCreationException;
+import com.example.template.exception.template.TemplateNotFoundException;
+import com.example.template.exception.template.TemplateTitleAlreadyExistsException;
+import com.example.template.mapper.TemplateMapper;
+import com.example.template.repository.TemplateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import java.util.Optional;
 public class TemplateService {
 
     private final TemplateRepository templateRepository;
-    private final RecipientRepository recipientRepository;
     private final MessageSourceService message;
     private final TemplateMapper mapper;
 
@@ -67,16 +65,16 @@ public class TemplateService {
                 ));
 
         for (Long recipientId : request.recipientIds()) {
-            if (templateRepository.existsByIdAndRecipientsId(templateId, recipientId)) {
-                log.warn("Recipient {} has already been registered for Template {}", recipientId, templateId);
-                continue;
-            }
+//            if (templateRepository.existsByIdAndRecipientsId(templateId, recipientId)) {
+//                log.warn("Recipient {} has already been registered for Template {}", recipientId, templateId);
+//                continue;
+//            }
 
-            recipientRepository.findByIdAndClientId(recipientId, clientId)
-                    .ifPresentOrElse(
-                            template::addRecipient,
-                            () -> log.warn("Recipient {} not found for Client {}", recipientId, clientId)
-                    );
+//            recipientRepository.findByIdAndClientId(recipientId, clientId)
+//                    .ifPresentOrElse(
+//                            template::addRecipient,
+//                            () -> log.warn("Recipient {} not found for Client {}", recipientId, clientId)
+//                    );
             templateRepository.save(template);
         }
 
@@ -90,12 +88,12 @@ public class TemplateService {
                 ));
 
         for (Long recipientId : request.recipientIds()) {
-            if (templateRepository.existsByIdAndRecipientsId(templateId, recipientId)) {
-                recipientRepository.findByIdAndClientId(recipientId, clientId)
-                        .ifPresent(template::removeRecipient);
-            } else {
-                log.warn("Recipient {} hasn't been registered for Template {}", recipientId, templateId);
-            }
+//            if (templateRepository.existsByIdAndRecipientsId(templateId, recipientId)) {
+//                recipientRepository.findByIdAndClientId(recipientId, clientId)
+//                        .ifPresent(template::removeRecipient);
+//            } else {
+//                log.warn("Recipient {} hasn't been registered for Template {}", recipientId, templateId);
+//            }
         }
 
         templateRepository.save(template);

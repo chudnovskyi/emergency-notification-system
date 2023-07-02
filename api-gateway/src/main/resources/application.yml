@@ -10,13 +10,24 @@ spring:
         - id: recipient-management-service
           uri: lb://RECIPIENT-MANAGEMENT-SERVICE
           predicates:
-            - Path=/api/v1/files/**,/api/v1/notifications/**,/api/v1/recipients/**,/api/v1/templates/**
+            - Path=/api/v1/files/**,/api/v1/notifications/**,/api/v1/recipients/**
           filters:
             - Authentication
         - id: recipient-management-service-docs
           uri: lb://RECIPIENT-MANAGEMENT-SERVICE
           predicates:
             - Path=/recipient-management-service/api-docs/**
+
+        - id: template-service
+          uri: lb://TEMPLATE-SERVICE
+          predicates:
+            - Path=/api/v1/templates/**
+          filters:
+            - Authentication
+        - id: template-service
+          uri: lb://TEMPLATE-SERVICE
+          predicates:
+            - Path=/template-service/api-docs/**
 
         - id: security-service
           uri: lb://SECURITY-SERVICE
@@ -38,6 +49,8 @@ springdoc:
         url: /recipient-management-service/api-docs
       - name: security-service
         url: /security-service/api-docs
+      - name: template-service
+        url: /template-service/api-docs
 
 eureka:
   client:

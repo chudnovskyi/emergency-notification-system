@@ -27,9 +27,9 @@ public class Notification implements BaseEntity<Long> {
     private Long id;
 
     private Long clientId;
+    private Long templateHistoryId;
 
     private NotificationType type;
-
     private String credential;
 
     @Builder.Default
@@ -50,23 +50,8 @@ public class Notification implements BaseEntity<Long> {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Recipient recipient;
 
-    @ManyToOne(
-            cascade = {
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
-            }
-    )
-    @JoinColumn(name = "template_history_id")
-    private TemplateHistory template;
-
     public Notification setNotificationStatus(NotificationStatus notificationStatus) {
         setStatus(notificationStatus);
-        return this;
-    }
-
-    public Notification setNotificationType(NotificationType notificationType) {
-        setType(notificationType);
         return this;
     }
 
@@ -77,6 +62,11 @@ public class Notification implements BaseEntity<Long> {
 
     public Notification addClient(Long clientId) {
         setClientId(clientId);
+        return this;
+    }
+
+    public Notification addTemplateHistory(Long templateHistoryId) {
+        setTemplateHistoryId(templateHistoryId);
         return this;
     }
 }

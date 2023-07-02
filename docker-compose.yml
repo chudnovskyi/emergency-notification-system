@@ -26,6 +26,19 @@ services:
     volumes:
       - db-postgres-security:/data
 
+  template-service-postgres:
+    image: postgres:alpine3.17
+    restart: always
+    ports:
+      - '5434:5432'
+    environment:
+      POSTGRES_DB: template
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data
+    volumes:
+      - db-postgres-template:/data
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     container_name: zookeeper
@@ -68,3 +81,4 @@ services:
 volumes:
   db-postgres: { }
   db-postgres-security: { }
+  db-postgres-template: { }
