@@ -60,7 +60,7 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
         String jwt = exchange.getRequest().getHeaders().getFirst("Authorization");
         headers.set("Authorization", jwt);
         RequestEntity<Void> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, URI.create(validateUrl));
-        return restTemplate.exchange(requestEntity, Long.class);
+        return restTemplate.exchange(requestEntity, Long.class); // TODO: WebFlux exception handling
     }
 
     private ServerHttpRequest addClientIdHeader(Long clientId, ServerWebExchange exchange) {

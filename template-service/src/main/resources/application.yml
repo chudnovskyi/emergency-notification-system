@@ -12,26 +12,22 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        show_sql: true
+        show_sql: false
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:9092
+    partitions: 3
+    topics:
+      recipient-update: recipient-updated
+      template-update: template-updated
 
 springdoc:
   api-docs:
     path: /template-service/api-docs
-
-logging:
-  level:
-    org:
-      springframework:
-        web: INFO
-      hibernate: ERROR
-    com:
-      example:
-        recipient: DEBUG
 
 eureka:
   client:

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -54,5 +56,14 @@ public class RecipientController {
             @RequestBody @Valid RecipientRequest request
     ) {
         return ResponseEntity.status(OK).body(recipientService.update(clientId, recipientId, request));
+    }
+
+    @GetMapping("/template/{id}")
+    @Operation(summary = "receive Recipient information belonging to Template with provided ID")
+    public ResponseEntity<List<RecipientResponse>> receiveByTemplateId(
+            @RequestHeader Long clientId,
+            @PathVariable("id") Long templateId
+    ) {
+        return ResponseEntity.status(OK).body(recipientService.receiveByTemplate(clientId, templateId));
     }
 }

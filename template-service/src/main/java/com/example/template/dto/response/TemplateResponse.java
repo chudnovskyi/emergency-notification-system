@@ -10,6 +10,6 @@ public record TemplateResponse(
         String title,
         String content,
         String imageUrl,
-        List<RecipientResponse> recipients
+        List<RecipientResponse> recipientIds
 ) {
 }

@@ -3,14 +3,17 @@ package com.example.recipient.service;
 import com.example.recipient.dto.request.RecipientRequest;
 import com.example.recipient.dto.response.RecipientResponse;
 import com.example.recipient.entity.Recipient;
+import com.example.recipient.entity.TemplateId;
 import com.example.recipient.exception.recipient.RecipientNotFoundException;
 import com.example.recipient.exception.recipient.RecipientRegistrationException;
 import com.example.recipient.mapper.RecipientMapper;
 import com.example.recipient.repository.RecipientRepository;
+import com.example.recipient.repository.TemplateIdRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class RecipientService {
 
     private final RecipientRepository recipientRepository;
+    private final TemplateIdRepository templateIdRepository;
     private final MessageSourceService message;
     private final RecipientMapper mapper;
 
@@ -70,5 +74,13 @@ public class RecipientService {
         } catch (DataIntegrityViolationException e) {
             throw new RecipientRegistrationException(e.getMessage());
         }
+    }
+
+    public List<RecipientResponse> receiveByTemplate(Long clientId, Long templateId) {
+        return templateIdRepository.findAllByRecipient_clientIdAndTemplateId(clientId, templateId)
+                .stream()
+                .map(TemplateId::getRecipient)
+                .map(mapper::mapToResponse)
+                .toList();
     }
 }

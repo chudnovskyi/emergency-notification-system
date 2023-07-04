@@ -18,6 +18,12 @@ spring:
         show_sql: false
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:9092
+    partitions: 3
+    topics:
+      recipient-update: recipient-updated
+      template-update: template-updated
 
 springdoc:
   api-docs:

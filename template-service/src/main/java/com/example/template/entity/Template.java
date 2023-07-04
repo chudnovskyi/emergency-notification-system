@@ -1,10 +1,11 @@
 package com.example.template.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -30,25 +31,33 @@ public class Template implements BaseEntity<Long> {
     private String content;
     private String imageUrl; // TODO: Amazon S3
 
-//    @ToString.Exclude
-//    @Builder.Default
-//    @ManyToMany(
-//            fetch = FetchType.LAZY,
-//            cascade = {
-//                    CascadeType.DETACH,
-//                    CascadeType.MERGE,
-//                    CascadeType.REFRESH
-//            }
-//    )
-//    @JoinTable(
-//            name = "template_recipient",
-//            joinColumns = @JoinColumn(name = "template_id"),
-//            inverseJoinColumns = @JoinColumn(name = "recipient_id")
-//    )
-//    private List<Recipient> recipients = new ArrayList<>();
+    @ToString.Exclude
+    @Builder.Default
+    @OneToMany(
+            mappedBy = "template",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<RecipientId> recipientIds = new ArrayList<>();
 
     public Template addClient(Long clientId) {
         setClientId(clientId);
         return this;
+    }
+
+    public void addRecipient(Long recipientId) {
+        recipientIds.add(
+                RecipientId.builder()
+                        .recipientId(recipientId)
+                        .template(this)
+                        .build()
+        );
+    }
+
+    public void removeRecipient(Long recipientId) {
+        recipientIds.removeIf(
+                recipient -> Objects.equals(recipient.getRecipientId(), recipientId)
+        );
     }
 }

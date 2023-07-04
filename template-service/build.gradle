@@ -26,12 +26,18 @@ ext {
     set('springCloudVersion', "2022.0.3")
 }
 
+configurations.configureEach {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.projectlombok:lombok'
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.swagger}"
@@ -44,6 +50,7 @@ dependencies {
     annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.testcontainers:testcontainers'
     testImplementation 'org.testcontainers:postgresql'

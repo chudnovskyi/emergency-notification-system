@@ -1,10 +1,11 @@
 package com.example.recipient.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -38,24 +39,34 @@ public class Recipient implements BaseEntity<Long> {
     private String telegramId;
     private String phoneNumber;
 
-//    @Builder.Default
-//    @ManyToMany(
-//            fetch = FetchType.LAZY,
-//            cascade = {
-//                    CascadeType.DETACH,
-//                    CascadeType.MERGE,
-//                    CascadeType.REFRESH
-//            }
-//    )
-//    @JoinTable(
-//            name = "template_recipient",
-//            joinColumns = @JoinColumn(name = "recipient_id"),
-//            inverseJoinColumns = @JoinColumn(name = "template_id")
-//    )
-//    private List<Template> templates = new ArrayList<>();
+    @ToString.Exclude
+    @Builder.Default
+    @OneToMany(
+            mappedBy = "recipient",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<TemplateId> templateIds = new ArrayList<>();
 
     public Recipient addClient(Long clientId) {
         setClientId(clientId);
+        return this;
+    }
+
+    public void addTemplate(Long templateId) {
+        templateIds.add(
+                TemplateId.builder()
+                        .templateId(templateId)
+                        .recipient(this)
+                        .build()
+        );
+    }
+
+    public Recipient removeTemplate(Long templateId) {
+        templateIds.removeIf(
+                template -> Objects.equals(template.getTemplateId(), templateId)
+        );
         return this;
     }
 }

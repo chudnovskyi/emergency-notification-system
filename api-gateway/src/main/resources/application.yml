@@ -7,6 +7,15 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: security-service
+          uri: lb://SECURITY-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+        - id: security-service-docs
+          uri: lb://SECURITY-SERVICE
+          predicates:
+            - Path=/security-service/api-docs/**
+
         - id: notification-service
           uri: lb://NOTIFICATION-SERVICE
           predicates:
@@ -29,19 +38,12 @@ spring:
           predicates:
             - Path=/template-service/api-docs/**
 
-        - id: security-service
-          uri: lb://SECURITY-SERVICE
-          predicates:
-            - Path=/api/v1/auth/**
-        - id: security-service-docs
-          uri: lb://SECURITY-SERVICE
-          predicates:
-            - Path=/security-service/api-docs/**
-
         - id: recipient-service
           uri: lb://RECIPIENT-SERVICE
           predicates:
             - Path=/api/v1/recipients/**
+          filters:
+            - Authentication
         - id: recipient-service-docs
           uri: lb://RECIPIENT-SERVICE
           predicates:
@@ -51,6 +53,8 @@ spring:
           uri: lb://FILE-SERVICE
           predicates:
             - Path=/api/v1/files/**
+          filters:
+            - Authentication
         - id: file-service-docs
           uri: lb://FILE-SERVICE
           predicates:
