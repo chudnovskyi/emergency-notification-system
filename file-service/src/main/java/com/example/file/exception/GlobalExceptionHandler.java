@@ -1,6 +1,6 @@
 package com.example.file.exception;
 
-import com.example.file.dto.ErrorResponse;
+import com.example.file.dto.response.ErrorResponse;
 import com.example.file.exception.file.BulkRecipientDownloadException;
 import com.example.file.exception.file.BulkRecipientRegistrationException;
 import com.example.file.exception.file.InvalidFileFormatException;

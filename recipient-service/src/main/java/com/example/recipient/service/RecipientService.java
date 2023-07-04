@@ -83,4 +83,11 @@ public class RecipientService {
                 .map(mapper::mapToResponse)
                 .toList();
     }
+
+    public List<RecipientResponse> receiveByClient(Long clientId) {
+        return recipientRepository.findAllByClientId(clientId)
+                .stream()
+                .map(mapper::mapToResponse)
+                .toList();
+    }
 }

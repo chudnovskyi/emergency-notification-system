@@ -1,5 +1,10 @@
 package com.example.file.service;
 
+import com.example.file.client.RecipientClient;
+import com.example.file.dto.request.GeolocationRequest;
+import com.example.file.dto.request.RecipientRequest;
+import com.example.file.dto.response.GeolocationResponse;
+import com.example.file.dto.response.RecipientResponse;
 import com.example.file.exception.file.BulkRecipientDownloadException;
 import com.example.file.exception.file.BulkRecipientRegistrationException;
 import com.example.file.exception.file.WorkbookCreationException;
@@ -14,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -21,6 +27,7 @@ import java.util.Map;
 public class FileService {
 
     private final MessageSourceService message;
+    private final RecipientClient recipientClient;
 
     public Boolean bulkRegistration(Long clientId, MultipartFile file) {
         Workbook workbook;
@@ -37,21 +44,21 @@ public class FileService {
                 break;
             }
             try {
-//                recipientService.register(
-//                        clientId,
-//                        RecipientRequest.builder()
-//                                .name(row.getCell(1).toString())
-//                                .email(row.getCell(2).toString())
-//                                .phoneNumber(row.getCell(3).toString())
-//                                .telegramId(row.getCell(4).toString())
-//                                .geolocation(
-//                                        GeolocationRequest.builder()
-//                                                .latitude(Double.parseDouble(row.getCell(5).toString()))
-//                                                .longitude(Double.parseDouble(row.getCell(6).toString()))
-//                                                .build()
-//                                )
-//                                .build()
-//                );
+                recipientClient.register(
+                        clientId,
+                        RecipientRequest.builder()
+                                .name(row.getCell(1).toString())
+                                .email(row.getCell(2).toString())
+                                .phoneNumber(row.getCell(3).toString())
+                                .telegramId(row.getCell(4).toString())
+                                .geolocation(
+                                        GeolocationRequest.builder()
+                                                .latitude(Double.parseDouble(row.getCell(5).toString()))
+                                                .longitude(Double.parseDouble(row.getCell(6).toString()))
+                                                .build()
+                                )
+                                .build()
+                );
             } catch (RuntimeException e) {
                 error.put(row.getCell(2).toString(), e.getMessage());
             }
@@ -65,7 +72,12 @@ public class FileService {
     }
 
     public byte[] downloadXlsx(Long clientId) {
-//        List<Recipient> recipients = recipientRepository.findAllByClientId(clientId);
+        List<RecipientResponse> recipients = recipientClient.receiveByClientId(clientId)
+                .getBody();
+
+        if (recipients == null || recipients.isEmpty()) {
+            return null;
+        }
 
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Recipients");
@@ -79,18 +91,18 @@ public class FileService {
             headerRow.createCell(5).setCellValue("Latitude");
             headerRow.createCell(6).setCellValue("Longitude");
 
-//            for (int i = 0; i < recipients.size(); i++) {
-//                Row row = sheet.createRow(i + 1);
-//                Recipient recipient = recipients.get(i);
-//                row.createCell(0).setCellValue(recipient.getId());
-//                row.createCell(1).setCellValue(recipient.getName());
-//                row.createCell(2).setCellValue(recipient.getEmail());
-//                row.createCell(3).setCellValue(recipient.getPhoneNumber());
-//                row.createCell(4).setCellValue(recipient.getTelegramId());
-//                Geolocation geolocation = recipient.getGeolocation();
-//                row.createCell(5).setCellValue(geolocation.getLatitude());
-//                row.createCell(6).setCellValue(geolocation.getLongitude());
-//            }
+            for (int i = 0; i < recipients.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                RecipientResponse recipient = recipients.get(i);
+                row.createCell(0).setCellValue(recipient.id());
+                row.createCell(1).setCellValue(recipient.name());
+                row.createCell(2).setCellValue(recipient.email());
+                row.createCell(3).setCellValue(recipient.phoneNumber());
+                row.createCell(4).setCellValue(recipient.telegramId());
+                GeolocationResponse geolocation = recipient.geolocation();
+                row.createCell(5).setCellValue(geolocation.latitude());
+                row.createCell(6).setCellValue(geolocation.longitude());
+            }
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             workbook.write(outputStream);

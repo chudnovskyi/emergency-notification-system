@@ -30,8 +30,16 @@ public class RecipientController {
         return ResponseEntity.status(CREATED).body(recipientService.register(clientId, request));
     }
 
+    @GetMapping("/")
+    @Operation(summary = "receive all Recipients by Client ID")
+    public ResponseEntity<List<RecipientResponse>> receiveByClientId(
+            @RequestHeader Long clientId
+    ) {
+        return ResponseEntity.status(OK).body(recipientService.receiveByClient(clientId));
+    }
+
     @GetMapping("/{id}")
-    @Operation(summary = "receive Recipient information by ID")
+    @Operation(summary = "receive a Recipient by ID")
     public ResponseEntity<RecipientResponse> receive(
             @RequestHeader Long clientId,
             @PathVariable("id") Long recipientId
@@ -59,7 +67,7 @@ public class RecipientController {
     }
 
     @GetMapping("/template/{id}")
-    @Operation(summary = "receive Recipient information belonging to Template with provided ID")
+    @Operation(summary = "receive all Recipients by Template ID")
     public ResponseEntity<List<RecipientResponse>> receiveByTemplateId(
             @RequestHeader Long clientId,
             @PathVariable("id") Long templateId
