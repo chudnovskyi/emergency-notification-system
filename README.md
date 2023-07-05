@@ -41,6 +41,10 @@
 
 ##
 
+## Architecture Diagram
+
+![](images/architecture-diagram.png)
+
 ### Scalability
 
 The system is designed to efficiently deliver notifications to a large number of users in a timely manner. To achieve
