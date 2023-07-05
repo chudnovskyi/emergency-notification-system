@@ -1,13 +1,14 @@
 package com.example.notification.listener;
 
-import com.example.notification.dto.request.NotificationRequest;
-import com.example.notification.model.NotificationType;
+import com.example.notification.client.RecipientClient;
 import com.example.notification.dto.kafka.NotificationKafka;
 import com.example.notification.dto.kafka.RecipientListKafka;
+import com.example.notification.dto.request.NotificationRequest;
 import com.example.notification.dto.response.NotificationResponse;
 import com.example.notification.dto.response.RecipientResponse;
 import com.example.notification.dto.response.TemplateHistoryResponse;
 import com.example.notification.mapper.NotificationMapper;
+import com.example.notification.model.NotificationType;
 import com.example.notification.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class KafkaListeners {
 
     private final KafkaTemplate<String, NotificationKafka> kafkaTemplate;
     private final NotificationService notificationService;
+    private final RecipientClient recipientClient;
     private final NotificationMapper mapper;
 
     @Value("${spring.kafka.topics.notifications.email}")
@@ -51,16 +53,21 @@ public class KafkaListeners {
 
             for (Long recipientId : recipientListKafka.recipientIds()) {
                 RecipientResponse response;
-//                try {
-//                    response = recipientService.receive(clientId, recipientId);
-//                } catch (RecipientNotFoundException e) {
-//                     TODO
-//                    continue;
-//                }
+                try {
+                    response = recipientClient.receiveByClientIdAndRecipientId(clientId, recipientId)
+                            .getBody();
+                } catch (RuntimeException e) {
+                    // TODO
+                    continue;
+                }
 
-//                sendNotificationByCredential(response::email, NotificationType.EMAIL, response, clientId, template, emailTopic);
-//                sendNotificationByCredential(response::phoneNumber, NotificationType.PHONE, response, clientId, template, phoneTopic);
-//                sendNotificationByCredential(response::telegramId, NotificationType.TELEGRAM, response, clientId, template, telegramTopic);
+                if (response == null) {
+                    continue;
+                }
+
+                sendNotificationByCredential(response::email, NotificationType.EMAIL, response, clientId, template, emailTopic);
+                sendNotificationByCredential(response::phoneNumber, NotificationType.PHONE, response, clientId, template, phoneTopic);
+                sendNotificationByCredential(response::telegramId, NotificationType.TELEGRAM, response, clientId, template, telegramTopic);
             }
         };
 

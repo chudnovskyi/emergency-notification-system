@@ -3,7 +3,7 @@ package com.example.sender.listener;
 import com.example.sender.client.NotificationClient;
 import com.example.sender.dto.kafka.NotificationKafka;
 import com.example.sender.dto.response.TemplateHistoryResponse;
-import com.example.sender.services.telegram.TelegramAlertService;
+import com.example.sender.service.telegram.TelegramAlertService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -42,7 +42,7 @@ public class KafkaListeners {
     private void emailNotificationListener(NotificationKafka notificationKafka) {
         log(notificationKafka);
         notificationClient.setNotificationAsCorrupt(notificationKafka.clientId(), notificationKafka.id());
-        // TODO
+//         TODO
     }
 
     @KafkaListener(
@@ -53,7 +53,7 @@ public class KafkaListeners {
     private void phoneNotificationListener(NotificationKafka notificationKafka) {
         log(notificationKafka);
         notificationClient.setNotificationAsCorrupt(notificationKafka.clientId(), notificationKafka.id());
-        // TODO
+//         TODO
     }
 
     private void log(NotificationKafka notificationKafka) { // TODO: AOP logging

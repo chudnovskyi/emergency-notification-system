@@ -1,4 +1,4 @@
-package com.example.sender.services.telegram;
+package com.example.sender.service.telegram;
 
 public record TelegramResponse(
         boolean ok

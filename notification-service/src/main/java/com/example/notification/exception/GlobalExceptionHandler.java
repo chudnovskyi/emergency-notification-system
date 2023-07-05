@@ -3,6 +3,7 @@ package com.example.notification.exception;
 import com.example.notification.dto.response.ErrorResponse;
 import com.example.notification.exception.notification.NotificationMappingNotFoundException;
 import com.example.notification.exception.notification.NotificationNotFoundException;
+import com.example.notification.exception.template.TemplateRecipientsNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -35,7 +36,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             NotificationNotFoundException.class,
-            NotificationMappingNotFoundException.class
+            NotificationMappingNotFoundException.class,
+            TemplateRecipientsNotFound.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, NOT_FOUND, request);

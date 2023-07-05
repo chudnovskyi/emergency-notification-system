@@ -1,4 +1,4 @@
-package com.example.sender.services.telegram;
+package com.example.sender.service.telegram;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

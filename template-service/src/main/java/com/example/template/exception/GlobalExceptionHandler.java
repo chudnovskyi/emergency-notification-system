@@ -3,7 +3,6 @@ package com.example.template.exception;
 import com.example.template.dto.response.ErrorResponse;
 import com.example.template.exception.template.TemplateCreationException;
 import com.example.template.exception.template.TemplateNotFoundException;
-import com.example.template.exception.template.TemplateRecipientsNotFound;
 import com.example.template.exception.template.TemplateTitleAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +34,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            TemplateNotFoundException.class,
-            TemplateRecipientsNotFound.class,
+            TemplateNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, NOT_FOUND, request);

@@ -29,7 +29,7 @@ public class KafkaConsumerConfig {
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         properties.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
-        properties.put(JsonDeserializer.TRUSTED_PACKAGES, "com.example.recipient.dto.kafka");
+        properties.put(JsonDeserializer.TRUSTED_PACKAGES, "com.example.notification.dto.kafka");
         return properties;
     }
 

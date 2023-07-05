@@ -1,4 +1,4 @@
-package com.example.sender.services.telegram;
+package com.example.sender.service.telegram;
 
 import com.example.sender.dto.response.TemplateHistoryResponse;
 import feign.FeignException.BadRequest;

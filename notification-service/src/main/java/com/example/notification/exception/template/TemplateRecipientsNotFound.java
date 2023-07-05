@@ -1,4 +1,4 @@
-package com.example.template.exception.template;
+package com.example.notification.exception.template;
 
 import jakarta.persistence.EntityNotFoundException;
 

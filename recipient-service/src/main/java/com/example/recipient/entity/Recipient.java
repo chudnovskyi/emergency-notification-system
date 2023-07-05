@@ -43,7 +43,7 @@ public class Recipient implements BaseEntity<Long> {
     @Builder.Default
     @OneToMany(
             mappedBy = "recipient",
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )

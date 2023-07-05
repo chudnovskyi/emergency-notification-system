@@ -1,9 +1,11 @@
 package com.example.notification.mapper;
 
+import com.example.notification.client.TemplateClient;
 import com.example.notification.dto.kafka.NotificationKafka;
 import com.example.notification.dto.request.NotificationRequest;
-import com.example.notification.entity.Notification;
 import com.example.notification.dto.response.NotificationResponse;
+import com.example.notification.entity.Notification;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -19,6 +21,6 @@ public interface NotificationMapper extends EntityMapper<Notification, Notificat
     @Mapping(target = "createdAt", ignore = true)
     Notification mapToEntity(NotificationRequest request);
 
-    @Override
-    NotificationResponse mapToResponse(Notification notification);
+    @Mapping(target = "template", expression = "java(templateClient.getTemplateHistory(notification.getClientId(), notification.getTemplateHistoryId()).getBody())")
+    NotificationResponse mapToResponse(Notification notification, @Context TemplateClient templateClient);
 }

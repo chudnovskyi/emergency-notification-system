@@ -28,19 +28,12 @@ spring:
         telegram: telegram-notification
       splitter: recipient-list-splitter
 
+notifications:
+  maxRetryAttempts: 3
+
 springdoc:
   api-docs:
     path: /notification-service/api-docs
-
-logging:
-  level:
-    org:
-      springframework:
-        web: INFO
-      hibernate: ERROR
-    com:
-      example:
-        recipient: DEBUG
 
 eureka:
   client:
@@ -52,6 +45,3 @@ eureka:
     metadataMap: # BUG: https://github.com/codecentric/spring-boot-admin/issues/134
       instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
-notifications:
-  maxRetryAttempts: 3

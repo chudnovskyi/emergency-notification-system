@@ -33,8 +33,10 @@ public class Notification implements BaseEntity<Long> {
 
     @Builder.Default
     private NotificationStatus status = PENDING;
+
     @Builder.Default
     private Integer retryAttempts = 0;
+
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 

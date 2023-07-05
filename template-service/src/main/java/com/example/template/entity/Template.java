@@ -55,9 +55,10 @@ public class Template implements BaseEntity<Long> {
         );
     }
 
-    public void removeRecipient(Long recipientId) {
+    public Template removeRecipient(Long recipientId) {
         recipientIds.removeIf(
                 recipient -> Objects.equals(recipient.getRecipientId(), recipientId)
         );
+        return this;
     }
 }

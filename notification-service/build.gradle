@@ -34,13 +34,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.projectlombok:lombok'
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.swagger}"
     implementation "org.hibernate:hibernate-validator:${versions.validator}"
     implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
-    implementation "org.apache.poi:poi:${versions.apache_poi}"
-    implementation "org.apache.poi:poi-ooxml:${versions.apache_poi}"
 
     runtimeOnly 'org.postgresql:postgresql'
 
