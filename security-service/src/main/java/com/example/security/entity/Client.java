@@ -38,11 +38,6 @@ public class Client implements UserDetails, BaseEntity<Long> {
     private String email;
     private String password;
 
-    private String name;
-    private String company;
-    private String phoneNumber;
-    private Address address;
-
     @Override
     public String getUsername() {
         return email;

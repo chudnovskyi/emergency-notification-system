@@ -23,15 +23,10 @@ springdoc:
   api-docs:
     path: /security-service/api-docs
 
-logging:
-  level:
-    org:
-      springframework:
-        web: INFO
-      hibernate: ERROR
-    com:
-      example:
-        recipient: DEBUG
+security:
+  jwt:
+    key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    prefix: 'Bearer '
 
 eureka:
   client:

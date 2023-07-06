@@ -4,6 +4,7 @@ import com.example.security.dto.response.ErrorResponse;
 import com.example.security.exception.client.ClientBadCredentialsException;
 import com.example.security.exception.client.ClientEmailAlreadyExistsException;
 import com.example.security.exception.client.ClientNotFoundException;
+import com.example.security.exception.token.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -50,7 +51,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             ClientBadCredentialsException.class,
-            AuthenticationException.class
+            AuthenticationException.class,
+            InvalidTokenException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, BAD_REQUEST, request);

@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,11 @@ import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
-    public static final String JWT_PREFIX = "Bearer ";
+    @Value("${security.jwt.key}")
+    private String key;
+
+    @Value("${security.jwt.prefix}")
+    public String prefix;
 
     public String generateJwt(UserDetails userDetails) {
         return Jwts.builder()
@@ -31,6 +35,14 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSignInKey(), HS256)
                 .compact();
+    }
+
+    public String extractJwt(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith(prefix)) {
+            return authHeader.substring(prefix.length());
+        }
+        return null;
     }
 
     public boolean isJwtValid(String jwt, UserDetails userDetails) {
@@ -43,8 +55,12 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(key);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private boolean isJwtExpired(String jwt) {
+        return extractClaim(jwt, Claims::getExpiration).before(new Date());
     }
 
     private <T> T extractClaim(String jwt, Function<Claims, T> claimsResolver) {
@@ -58,17 +74,5 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(jwt)
                 .getBody();
-    }
-
-    private boolean isJwtExpired(String jwt) {
-        return extractClaim(jwt, Claims::getExpiration).before(new Date());
-    }
-
-    public String extractJwt(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith(JWT_PREFIX)) {
-            return authHeader.substring(JWT_PREFIX.length());
-        }
-        return null;
     }
 }

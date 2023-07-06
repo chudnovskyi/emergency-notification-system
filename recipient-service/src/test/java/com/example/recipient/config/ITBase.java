@@ -26,14 +26,14 @@ public class ITBase {
         registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
     }
 
-    public String extractJsonValueByKey(ResultActions resultActions, String key) throws Exception {
+    public String extractJsonValueByKey(ResultActions resultActions, String field) throws Exception {
         return new ObjectMapper()
                 .readTree(
                         resultActions.andReturn()
                                 .getResponse()
                                 .getContentAsString()
                 )
-                .at("/" + key)
+                .at("/" + field)
                 .asText();
     }
 }

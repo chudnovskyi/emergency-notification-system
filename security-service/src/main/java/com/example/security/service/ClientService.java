@@ -1,11 +1,12 @@
 package com.example.security.service;
 
-import com.example.security.dto.request.AuthenticationRequest;
-import com.example.security.dto.response.AuthenticationResponse;
+import com.example.security.dto.request.SecurityRequest;
+import com.example.security.dto.response.TokenResponse;
 import com.example.security.entity.Client;
 import com.example.security.exception.client.ClientBadCredentialsException;
 import com.example.security.exception.client.ClientEmailAlreadyExistsException;
 import com.example.security.exception.client.ClientNotFoundException;
+import com.example.security.mapper.ClientMapper;
 import com.example.security.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,35 +17,35 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.example.security.model.Role.USER;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ClientService implements UserDetailsService {
 
+    private final JwtService jwtService;
+    private final TokenService tokenService;
+    private final MessageSourceService message;
     private final ClientRepository clientRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-    private final MessageSourceService message;
-    private final JwtService jwtService;
-    private final TokenService tokenService;
+    private final ClientMapper mapper;
 
-    public Boolean register(AuthenticationRequest request) {
-        if (isClientWithGivenEmailExists(request.email())) {
-            throw new ClientEmailAlreadyExistsException(message.getProperty("client.email.already_exists"));
-        }
-
-        Client client = Client.builder()
-                .role(USER)
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .build();
-
-        return clientRepository.save(client)
-                .isEnabled();
+    public Boolean register(SecurityRequest request) {
+        return Optional.of(clientRepository.findByEmail(request.email()))
+                .map(client -> {
+                    if (client.isPresent()) {
+                        throw new ClientEmailAlreadyExistsException(message.getProperty("client.email.already_exists"));
+                    } else {
+                        return request;
+                    }
+                })
+                .map(req -> mapper.mapToEntity(req, passwordEncoder))
+                .map(clientRepository::saveAndFlush)
+                .isPresent();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public TokenResponse authenticate(SecurityRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -64,7 +65,7 @@ public class ClientService implements UserDetailsService {
         String jwt = jwtService.generateJwt(client);
         tokenService.createToken(client, jwt);
 
-        return new AuthenticationResponse(jwt);
+        return new TokenResponse(jwt);
     }
 
     @Override
@@ -73,10 +74,5 @@ public class ClientService implements UserDetailsService {
                 .orElseThrow(() -> new ClientNotFoundException(
                         message.getProperty("client.not_found", username)
                 ));
-    }
-
-    private boolean isClientWithGivenEmailExists(String email) {
-        return clientRepository.findByEmail(email)
-                .isPresent();
     }
 }
