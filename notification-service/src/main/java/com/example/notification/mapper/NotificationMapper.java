@@ -19,6 +19,7 @@ public interface NotificationMapper extends EntityMapper<Notification, Notificat
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "retryAttempts", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "templateHistoryId", ignore = true)
     Notification mapToEntity(NotificationRequest request);
 
     @Mapping(target = "template", expression = "java(templateClient.getTemplateHistory(notification.getClientId(), notification.getTemplateHistoryId()).getBody())")

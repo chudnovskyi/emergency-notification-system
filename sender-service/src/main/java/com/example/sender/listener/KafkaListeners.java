@@ -42,7 +42,7 @@ public class KafkaListeners {
     private void emailNotificationListener(NotificationKafka notificationKafka) {
         log(notificationKafka);
         notificationClient.setNotificationAsCorrupt(notificationKafka.clientId(), notificationKafka.id());
-//         TODO
+//         TODO: Amazon SES
     }
 
     @KafkaListener(
@@ -53,7 +53,7 @@ public class KafkaListeners {
     private void phoneNotificationListener(NotificationKafka notificationKafka) {
         log(notificationKafka);
         notificationClient.setNotificationAsCorrupt(notificationKafka.clientId(), notificationKafka.id());
-//         TODO
+//         TODO: Twilio
     }
 
     private void log(NotificationKafka notificationKafka) { // TODO: AOP logging

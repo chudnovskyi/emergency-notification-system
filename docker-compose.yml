@@ -1,19 +1,8 @@
 version: '3.8'
 services:
-  notification-service-postgres:
-    image: postgres:alpine3.17
-    restart: always
-    ports:
-      - '5432:5432'
-    environment:
-      POSTGRES_DB: notification
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      PGDATA: /data
-    volumes:
-      - db-postgres-notification:/data
-
   security-service-postgres:
+    container_name: security-service-postgres
+    hostname: security-service-postgres
     image: postgres:alpine3.17
     restart: always
     ports:
@@ -26,7 +15,24 @@ services:
     volumes:
       - db-postgres-security:/data
 
+  recipient-service-postgres:
+    container_name: recipient-service-postgres
+    hostname: recipient-service-postgres
+    image: postgres:alpine3.17
+    restart: always
+    ports:
+      - '5435:5432'
+    environment:
+      POSTGRES_DB: recipient
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data
+    volumes:
+      - db-postgres-recipient:/data
+
   template-service-postgres:
+    container_name: template-service-postgres
+    hostname: template-service-postgres
     image: postgres:alpine3.17
     restart: always
     ports:
@@ -43,18 +49,20 @@ services:
     volumes:
       - db-postgres-template:/data
 
-  recipient-service-postgres:
+  notification-service-postgres:
+    container_name: notification-service-postgres
+    hostname: notification-service-postgres
     image: postgres:alpine3.17
     restart: always
     ports:
-      - '5435:5432'
+      - '5432:5432'
     environment:
-      POSTGRES_DB: recipient
+      POSTGRES_DB: notification
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data
     volumes:
-      - db-postgres-recipient:/data
+      - db-postgres-notification:/data
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
@@ -79,21 +87,90 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
-#  discovery-server:
-#    image: v1acheslav/discovery-server:1.0.0
-#    restart: always
-#    ports:
-#      - '8761:8761'
-#
-#  api-gateway:
-#    image: v1acheslav/api-gateway:1.0.0
-#    restart: always
-#    ports:
-#      - '8080:8080'
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=docker
-#    depends_on:
-#      - discovery-server
+  discovery-server:
+    image: v1acheslav/discovery-server:1.0.1
+    restart: always
+    ports:
+      - '8761:8761'
+
+  api-gateway:
+    image: v1acheslav/api-gateway:1.0.1
+    restart: always
+    ports:
+      - '8080:8080'
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+
+  security-service:
+    image: v1acheslav/security-service:1.0.5
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - security-service-postgres
+      - discovery-server
+      - api-gateway
+
+  recipient-service:
+    image: v1acheslav/recipient-service:1.0.3
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - recipient-service-postgres
+      - discovery-server
+      - api-gateway
+      - zookeeper
+      - broker
+
+  template-service:
+    image: v1acheslav/template-service:1.0.3
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - template-service-postgres
+      - discovery-server
+      - api-gateway
+      - zookeeper
+      - broker
+
+  notification-service:
+    image: v1acheslav/notification-service:1.0.3
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - notification-service-postgres
+      - discovery-server
+      - api-gateway
+      - zookeeper
+      - broker
+
+  sender-service:
+    image: v1acheslav/sender-service:1.0.3
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+      - zookeeper
+      - broker
+
+  file-service:
+    image: v1acheslav/file-service:1.0.1
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+      - api-gateway
+
+  telegram-bot-service:
+    image: v1acheslav/telegram-bot-service:1.0.1
+    restart: always
 
 volumes:
   db-postgres: { }

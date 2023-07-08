@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5433/security
+    url: jdbc:postgresql://security-service-postgres:5432/security
 
 eureka:
   client:

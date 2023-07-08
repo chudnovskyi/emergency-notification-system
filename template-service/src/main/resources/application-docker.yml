@@ -3,7 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5434/template
+    url: jdbc:postgresql://template-service-postgres:5432/template
+  kafka:
+    bootstrap-servers: broker:29092
 
 eureka:
   client:

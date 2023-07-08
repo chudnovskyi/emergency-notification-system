@@ -3,7 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/notification
+    url: jdbc:postgresql://notification-service-postgres:5432/notification
+  kafka:
+    bootstrap-servers: broker:29092
 
 eureka:
   client:

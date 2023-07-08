@@ -4,20 +4,6 @@ server:
 spring:
   application:
     name: sender-service
-  datasource:
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/emergency
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     bootstrap-servers: localhost:9092
     topics:
@@ -30,10 +16,6 @@ notification:
   services:
     telegram:
       token: 6080621435:AAG8hChAJ9vKPDEhiZ9_OlhZaqswZi5jk0o
-
-springdoc:
-  api-docs:
-    path: /sender-service/api-docs
 
 eureka:
   client:

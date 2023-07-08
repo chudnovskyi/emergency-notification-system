@@ -5,12 +5,9 @@ plugins {
 }
 apply from: 'version.gradle'
 
-group = 'com.telegram'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    sourceCompatibility = '17'
-}
+group = 'com.example'
+version = '1.0.1'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()

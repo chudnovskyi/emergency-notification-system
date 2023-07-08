@@ -2,8 +2,8 @@ server:
   port: 1001
 
 spring:
-  datasource:
-    url: jdbc:postgresql://postgres:5432/emergency
+  kafka:
+    bootstrap-servers: broker:29092
 
 eureka:
   client:

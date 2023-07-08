@@ -1,7 +1,5 @@
 ext {
     versions = [
-            mapstruct: '1.5.3.Final',
-            swagger  : '2.0.4',
-            assertj  : '3.24.2',
+            assertj: '3.24.2',
     ]
 }
