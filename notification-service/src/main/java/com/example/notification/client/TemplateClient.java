@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "template-service")
+@FeignClient(name = "${services.template}")
 public interface TemplateClient {
 
     @GetMapping("/api/v1/templates/{id}")

@@ -25,6 +25,9 @@ spring:
       recipient-update: recipient-updated
       template-update: template-updated
 
+services:
+  recipeint: recipient-service
+
 springdoc:
   api-docs:
     path: /template-service/api-docs

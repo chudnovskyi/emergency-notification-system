@@ -1,0 +1,11 @@
+server:
+  port: 1007
+
+spring:
+  kafka:
+    bootstrap-servers: broker:29092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka

@@ -44,7 +44,7 @@ public class ClientService implements UserDetailsService {
                 .map(clientRepository::saveAndFlush)
                 .isPresent();
     }
-
+    
     public TokenResponse authenticate(SecurityRequest request) {
         try {
             authenticationManager.authenticate(

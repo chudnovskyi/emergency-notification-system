@@ -1,0 +1,5 @@
+ext {
+    versions = [
+            assertj: '3.24.2',
+    ]
+}

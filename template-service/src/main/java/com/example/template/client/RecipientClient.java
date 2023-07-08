@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
-@FeignClient(name = "recipient-service")
+@FeignClient(name = "${services.recipeint}")
 public interface RecipientClient {
 
     @GetMapping(value = "/api/v1/recipients/{id}")

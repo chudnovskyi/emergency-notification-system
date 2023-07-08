@@ -3,38 +3,14 @@ server:
 
 spring:
   application:
-    name: notification-service
-  datasource:
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/notification
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        show_sql: false
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    name: rebalancer
   kafka:
     bootstrap-servers: localhost:9092
-    partitions: 10
     topics:
       notifications:
         email: email-notification
         phone: phone-notification
         telegram: telegram-notification
-      splitter: recipient-list-splitter
-
-services:
-  recipient: recipient-service
-  template: template-service
-
-springdoc:
-  api-docs:
-    path: /notification-service/api-docs
 
 eureka:
   client:

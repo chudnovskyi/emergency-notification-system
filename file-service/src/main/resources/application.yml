@@ -5,6 +5,9 @@ spring:
   application:
     name: file-service
 
+services:
+  recipient: recipient-service
+
 springdoc:
   api-docs:
     path: /file-service/api-docs

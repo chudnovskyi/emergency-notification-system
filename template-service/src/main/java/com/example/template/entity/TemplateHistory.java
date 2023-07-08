@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "template_history")
+@Table(name = "templates_history")
 public class TemplateHistory implements BaseEntity<Long> {
 
     @Id

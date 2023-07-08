@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
-@FeignClient(name = "recipient-service")
+@FeignClient(name = "${services.recipient}")
 public interface RecipientClient {
 
     @PostMapping("/api/v1/recipients/")

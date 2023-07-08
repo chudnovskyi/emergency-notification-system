@@ -3,15 +3,13 @@ package com.example.notification.service;
 import com.example.notification.client.TemplateClient;
 import com.example.notification.dto.kafka.RecipientListKafka;
 import com.example.notification.dto.request.NotificationRequest;
-import com.example.notification.dto.response.NotificationResponse;
-import com.example.notification.dto.response.RecipientResponse;
-import com.example.notification.dto.response.TemplateHistoryResponse;
-import com.example.notification.dto.response.TemplateResponse;
+import com.example.notification.dto.response.*;
 import com.example.notification.entity.Notification;
 import com.example.notification.exception.notification.NotificationNotFoundException;
 import com.example.notification.exception.template.TemplateRecipientsNotFound;
 import com.example.notification.mapper.NotificationMapper;
 import com.example.notification.model.NotificationStatus;
+import com.example.notification.repository.NotificationHistoryRepository;
 import com.example.notification.repository.NotificationRepository;
 import com.example.notification.util.CollectionUtils;
 import com.example.notification.util.NodeChecker;
@@ -30,6 +28,7 @@ import static com.example.notification.model.NotificationStatus.*;
 public class NotificationService {
 
     private final KafkaTemplate<String, RecipientListKafka> kafkaTemplate;
+    private final NotificationHistoryRepository notificationHistoryRepository;
     private final NotificationRepository notificationRepository;
     private final TemplateClient templateClient;
     private final MessageSourceService message;
@@ -42,10 +41,7 @@ public class NotificationService {
     @Value("${spring.kafka.topics.splitter}")
     private String recipientListDistributionTopic;
 
-    @Value("${notifications.maxRetryAttempts}")
-    private Integer maxRetryAttempts;
-
-    public String distributeNotifications(Long clientId, Long templateId) {
+    public String distributeNotifications(Long clientId, Long templateId) { // TODO: separate service
         TemplateResponse templateResponse = templateClient.getTemplateByClientIdAndTemplateId(clientId, templateId)
                 .getBody(); // TODO: retrieve list of IDS at once, not TemplateResponse
 
@@ -82,29 +78,22 @@ public class NotificationService {
                 .orElseThrow(); // TODO
     }
 
-    public NotificationResponse setNotificationAsSent(Long clientId, Long notificationId) {
-        return setNotificationStatus(clientId, notificationId, SENT);
+    public NotificationHistoryResponse setNotificationAsSent(Long clientId, Long notificationId) {
+        return setNotificationAsExecutedWithGivenStatus(clientId, notificationId, SENT);
     }
 
-    public NotificationResponse setNotificationAsError(Long clientId, Long notificationId) {
-        return setNotificationStatus(clientId, notificationId, ERROR);
+    public NotificationHistoryResponse setNotificationAsError(Long clientId, Long notificationId) {
+        return setNotificationAsExecutedWithGivenStatus(clientId, notificationId, ERROR);
     }
 
-    public NotificationResponse setNotificationAsCorrupt(Long clientId, Long notificationId) {
-        return setNotificationStatus(clientId, notificationId, CORRUPT);
+    public NotificationHistoryResponse setNotificationAsCorrupt(Long clientId, Long notificationId) {
+        return setNotificationAsExecutedWithGivenStatus(clientId, notificationId, CORRUPT);
     }
 
     public NotificationResponse setNotificationAsResending(Long clientId, Long notificationId) {
         return notificationRepository.findByIdAndClientId(notificationId, clientId)
                 .map(Notification::incrementRetryAttempts)
-                .map(notification -> {
-                    if (notification.getRetryAttempts() >= maxRetryAttempts) {
-                        notification.setNotificationStatus(ERROR);
-                    } else {
-                        notification.setNotificationStatus(RESENDING);
-                    }
-                    return notification;
-                })
+                .map(notification -> notification.setNotificationStatus(RESENDING))
                 .map(notificationRepository::saveAndFlush)
                 .map(notification -> mapper.mapToResponse(notification, templateClient))
                 .orElseThrow(() -> new NotificationNotFoundException(
@@ -112,11 +101,19 @@ public class NotificationService {
                 ));
     }
 
-    private NotificationResponse setNotificationStatus(Long clientId, Long notificationId, NotificationStatus status) {
+    private NotificationHistoryResponse setNotificationAsExecutedWithGivenStatus(
+            Long clientId, Long notificationId,
+            NotificationStatus status
+    ) {
         return notificationRepository.findByIdAndClientId(notificationId, clientId)
-                .map(notification -> notification.setNotificationStatus(status))
-                .map(notificationRepository::saveAndFlush)
-                .map(notification -> mapper.mapToResponse(notification, templateClient))
+                .map(notification -> {
+                    notificationRepository.delete(notification);
+                    return notification;
+                })
+                .map(mapper::mapToHistory)
+                .map(notificationHistory -> notificationHistory.setNotificationStatus(status))
+                .map(notificationHistoryRepository::saveAndFlush)
+                .map(mapper::mapToResponse)
                 .orElseThrow(() -> new NotificationNotFoundException(
                         message.getProperty("notification.not_found", notificationId, clientId)
                 ));

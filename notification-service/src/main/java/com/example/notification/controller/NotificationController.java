@@ -1,5 +1,6 @@
 package com.example.notification.controller;
 
+import com.example.notification.dto.response.NotificationHistoryResponse;
 import com.example.notification.service.NotificationService;
 import com.example.notification.dto.response.NotificationResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +28,7 @@ public class NotificationController {
 
     @PostMapping("/{id}/sent")
     @Operation(summary = "set Notification status as successfully sent to Recipient")
-    public ResponseEntity<NotificationResponse> setNotificationAsSent(
+    public ResponseEntity<NotificationHistoryResponse> setNotificationAsSent(
             @RequestHeader Long clientId,
             @PathVariable("id") Long notificationId
     ) {
@@ -36,7 +37,7 @@ public class NotificationController {
 
     @PostMapping("/{id}/error")
     @Operation(summary = "set Notification status as error ")
-    public ResponseEntity<NotificationResponse> setNotificationAsError(
+    public ResponseEntity<NotificationHistoryResponse> setNotificationAsError(
             @RequestHeader Long clientId,
             @PathVariable("id") Long notificationId
     ) {
@@ -45,7 +46,7 @@ public class NotificationController {
 
     @PostMapping("/{id}/corrupt")
     @Operation(summary = "set Notification status as impossible to sent")
-    public ResponseEntity<NotificationResponse> setNotificationAsCorrupt(
+    public ResponseEntity<NotificationHistoryResponse> setNotificationAsCorrupt(
             @RequestHeader Long clientId,
             @PathVariable("id") Long notificationId
     ) {
@@ -54,7 +55,7 @@ public class NotificationController {
 
     @PostMapping("/{id}/resending")
     @Operation(summary = "set Notification status as waiting to be resend")
-    public ResponseEntity<NotificationResponse> setNotificationAsResending(
+    public ResponseEntity<?> setNotificationAsResending(
             @RequestHeader Long clientId,
             @PathVariable("id") Long notificationId
     ) {
