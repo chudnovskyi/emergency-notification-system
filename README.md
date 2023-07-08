@@ -28,7 +28,7 @@
   during peak usage or in the event of system failures.
 - [ ] **Reliability:** The system should be reliable and deliver notifications consistently without any data loss or
   delays.
-- [ ] **Low Latency:** The system should have low latency, ensuring that notifications are sent and received promptly to
+- [x] **Low Latency:** The system should have low latency, ensuring that notifications are sent and received promptly to
   minimize response time during emergencies.
 - [x] **Scalability:** The system should be able to handle a growing number of recipients and notifications without
   compromising performance or functionality.
@@ -47,10 +47,10 @@
 
 ##
 
-### Scalability
+### Scalability / Low Latency
 
 The system is designed to efficiently deliver notifications to a large number of users in a timely manner. To achieve
-scalability, the system employs the following logic:
+scalability and low latency, the system employs the following logic:
 
 - `Request Partitioning:` When a client sends a request with a large list of user IDs to whom notifications need to be
   sent, the system dynamically determines the number of instances currently running using the Eureka Discovery Server.
@@ -67,23 +67,28 @@ scalability, the system employs the following logic:
   time to a different service responsible for sending out the actual notifications. This separation of processing and
   notification delivery allows for modular and scalable architecture.
 
-##
-
 ### Endpoints documentation
-> Access all API documentation in one place using Ape-Gateway's centralized approach. 
-> Explore endpoints and their functionalities conveniently through this [link](http://localhost:8080/webjars/swagger-ui/index.html).
+
+> Access all API documentation in one place using Ape-Gateway's centralized approach.
+> Explore endpoints and their functionalities conveniently through
+> this [link](http://localhost:8080/webjars/swagger-ui/index.html).
 
 #### security-service
+
 ![](images/security-docs.png)
 
 #### recipient-service
+
 ![](images/recipient-docs.png)
 
 #### template-service
+
 ![](images/template-docs.png)
 
 #### notification-service
+
 ![](images/notification-docs.png)
 
 #### file-service
+
 ![](images/file-docs.png)
