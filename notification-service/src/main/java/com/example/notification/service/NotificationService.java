@@ -90,6 +90,16 @@ public class NotificationService {
         return setNotificationAsExecutedWithGivenStatus(clientId, notificationId, CORRUPT);
     }
 
+    public NotificationResponse setNotificationAsPending(Long clientId, Long notificationId) {
+        return notificationRepository.findByIdAndClientId(notificationId, clientId)
+                .map(notification -> notification.setNotificationStatus(PENDING))
+                .map(notificationRepository::saveAndFlush)
+                .map(notification -> mapper.mapToResponse(notification, templateClient))
+                .orElseThrow(() -> new NotificationNotFoundException(
+                        message.getProperty("notification.not_found", notificationId, clientId)
+                ));
+    }
+
     public NotificationResponse setNotificationAsResending(Long clientId, Long notificationId) {
         return notificationRepository.findByIdAndClientId(notificationId, clientId)
                 .map(Notification::incrementRetryAttempts)

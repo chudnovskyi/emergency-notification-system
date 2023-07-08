@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-import static com.example.notification.model.NotificationStatus.PENDING;
+import static com.example.notification.model.NotificationStatus.NEW;
 
 @Data
 @Builder
@@ -32,7 +32,7 @@ public class Notification implements BaseEntity<Long> {
     private String credential;
 
     @Builder.Default
-    private NotificationStatus status = PENDING;
+    private NotificationStatus status = NEW;
 
     @Builder.Default
     private Integer retryAttempts = 0;

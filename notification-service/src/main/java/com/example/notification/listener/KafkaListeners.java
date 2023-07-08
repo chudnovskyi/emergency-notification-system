@@ -101,6 +101,7 @@ public class KafkaListeners {
                 return;
             }
             NotificationKafka notificationKafka = mapper.mapToKafka(notificationResponse);
+            notificationService.setNotificationAsPending(clientId, notificationResponse.id());
             kafkaTemplate.send(topic, notificationKafka);
         }
     }
