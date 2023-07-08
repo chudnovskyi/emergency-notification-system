@@ -45,6 +45,8 @@
 
 ![](images/architecture-diagram.png)
 
+##
+
 ### Scalability
 
 The system is designed to efficiently deliver notifications to a large number of users in a timely manner. To achieve
@@ -64,3 +66,24 @@ scalability, the system employs the following logic:
 - `Result Aggregation:` After processing the user IDs, the system sends the processed entities back to Kafka, but this
   time to a different service responsible for sending out the actual notifications. This separation of processing and
   notification delivery allows for modular and scalable architecture.
+
+##
+
+### Endpoints documentation
+> Access all API documentation in one place using Ape-Gateway's centralized approach. 
+> Explore endpoints and their functionalities conveniently through this [link](http://localhost:8080/webjars/swagger-ui/index.html).
+
+#### security-service
+![](images/security-docs.png)
+
+#### recipient-service
+![](images/recipient-docs.png)
+
+#### template-service
+![](images/template-docs.png)
+
+#### notification-service
+![](images/notification-docs.png)
+
+#### file-service
+![](images/file-docs.png)
