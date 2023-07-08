@@ -85,9 +85,9 @@ public class KafkaListeners {
     ) {
         String credential = supplier.get();
         if (credential != null) {
-            NotificationResponse notificationResponse;
+            Long notificationId;
             try {
-                notificationResponse = notificationService.createNotification(
+                notificationId = notificationService.createNotification( // TODO: mapper
                         NotificationRequest.builder()
                                 .type(type)
                                 .credential(credential)
@@ -95,13 +95,13 @@ public class KafkaListeners {
                                 .recipientId(recipientResponse.id())
                                 .clientId(clientId)
                                 .build()
-                );
+                ).id();
             } catch (EntityNotFoundException e) {
                 // TODO
                 return;
             }
-            NotificationKafka notificationKafka = mapper.mapToKafka(notificationResponse);
-            notificationService.setNotificationAsPending(clientId, notificationResponse.id());
+            NotificationResponse response = notificationService.setNotificationAsPending(clientId, notificationId);
+            NotificationKafka notificationKafka = mapper.mapToKafka(response);
             kafkaTemplate.send(topic, notificationKafka);
         }
     }

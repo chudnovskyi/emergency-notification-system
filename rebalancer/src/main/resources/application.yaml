@@ -12,6 +12,14 @@ spring:
         phone: phone-notification
         telegram: telegram-notification
 
+rebalancer:
+  seconds-before-resend-pending: 5
+  seconds-before-resend-new: 5
+  max-amount-to-fetch: 10
+
+services:
+  notification: notification-service
+
 eureka:
   client:
     service-url:

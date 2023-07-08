@@ -1,6 +1,7 @@
 package com.example.notification.service;
 
 import com.example.notification.client.TemplateClient;
+import com.example.notification.dto.kafka.NotificationKafka;
 import com.example.notification.dto.kafka.RecipientListKafka;
 import com.example.notification.dto.request.NotificationRequest;
 import com.example.notification.dto.response.*;
@@ -15,13 +16,16 @@ import com.example.notification.util.CollectionUtils;
 import com.example.notification.util.NodeChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static com.example.notification.model.NotificationStatus.*;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +67,8 @@ public class NotificationService {
                 .getBody();
 
         for (List<Long> recipients : splitRecipientIds(recipientIds)) {
-            kafkaTemplate.send(recipientListDistributionTopic, new RecipientListKafka(recipients, templateHistoryResponse, clientId));
+            RecipientListKafka listKafka = new RecipientListKafka(recipients, templateHistoryResponse, clientId);
+            kafkaTemplate.send(recipientListDistributionTopic, listKafka);
         }
 
         return "Notification's been successfully sent!";
@@ -76,6 +81,19 @@ public class NotificationService {
                 .map(notificationRepository::saveAndFlush)
                 .map(notification -> mapper.mapToResponse(notification, templateClient))
                 .orElseThrow(); // TODO
+    }
+
+    public List<NotificationKafka> getNotificationsForRebalancing(Long clientId, Long pendingSec, Long newSec, Integer size) {
+        LocalDateTime now = LocalDateTime.now();
+        return notificationRepository.findNotificationsByStatusAndCreatedAt(
+                        clientId, now.minus(pendingSec, SECONDS), now.minus(newSec, SECONDS), Pageable.ofSize(size)
+                ).stream()
+                .map(notification -> notification.setNotificationStatus(PENDING))
+                .map(Notification::updateCreatedAt)
+                .map(notificationRepository::saveAndFlush)
+                .map(mapper::mapToResponse)
+                .map(mapper::mapToKafka)
+                .toList();
     }
 
     public NotificationHistoryResponse setNotificationAsSent(Long clientId, Long notificationId) {

@@ -45,6 +45,11 @@ public class Notification implements BaseEntity<Long> {
         return this;
     }
 
+    public Notification updateCreatedAt() {
+        setCreatedAt(LocalDateTime.now());
+        return this;
+    }
+
     public Notification incrementRetryAttempts() {
         setRetryAttempts(getRetryAttempts() + 1);
         return this;

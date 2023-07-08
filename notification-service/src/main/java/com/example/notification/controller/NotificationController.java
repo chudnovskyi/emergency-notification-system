@@ -1,12 +1,15 @@
 package com.example.notification.controller;
 
+import com.example.notification.dto.kafka.NotificationKafka;
 import com.example.notification.dto.response.NotificationHistoryResponse;
-import com.example.notification.service.NotificationService;
 import com.example.notification.dto.response.NotificationResponse;
+import com.example.notification.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -36,7 +39,7 @@ public class NotificationController {
     }
 
     @PostMapping("/{id}/error")
-    @Operation(summary = "set Notification status as error ")
+    @Operation(summary = "set Notification status as error")
     public ResponseEntity<NotificationHistoryResponse> setNotificationAsError(
             @RequestHeader Long clientId,
             @PathVariable("id") Long notificationId
@@ -55,10 +58,23 @@ public class NotificationController {
 
     @PostMapping("/{id}/resending")
     @Operation(summary = "set Notification status as waiting to be resend")
-    public ResponseEntity<?> setNotificationAsResending(
+    public ResponseEntity<NotificationResponse> setNotificationAsResending(
             @RequestHeader Long clientId,
             @PathVariable("id") Long notificationId
     ) {
         return ResponseEntity.status(OK).body(notificationService.setNotificationAsResending(clientId, notificationId));
+    }
+
+    @GetMapping("/")
+    @Operation(summary = "FOR REBALANCER: get Resending/Pending/New Notifications (set Pending status)")
+    public ResponseEntity<List<NotificationKafka>> getNotificationsForRebalancing(
+            @RequestHeader Long clientId,
+            @RequestParam(name = "pending", required = false, defaultValue = "10") Long pendingSec,
+            @RequestParam(name = "new", required = false, defaultValue = "10") Long newSec,
+            @RequestParam(name = "size", required = false, defaultValue = "20") Integer size
+    ) {
+        return ResponseEntity.status(OK).body(
+                notificationService.getNotificationsForRebalancing(clientId, pendingSec, newSec, size)
+        );
     }
 }

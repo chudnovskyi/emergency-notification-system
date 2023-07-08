@@ -12,10 +12,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
-        show_sql: false
+        show_sql: true
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
