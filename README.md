@@ -26,7 +26,7 @@
 
 - [ ] **High Availability:** The system should be highly available, ensuring that it is accessible and operational even
   during peak usage or in the event of system failures.
-- [ ] **Reliability:** The system should be reliable and deliver notifications consistently without any data loss or
+- [x] **Reliability:** The system should be reliable and deliver notifications consistently without any data loss or
   delays.
 - [x] **Low Latency:** The system should have low latency, ensuring that notifications are sent and received promptly to
   minimize response time during emergencies.
@@ -66,6 +66,20 @@ scalability and low latency, the system employs the following logic:
 - `Result Aggregation:` After processing the user IDs, the system sends the processed entities back to Kafka, but this
   time to a different service responsible for sending out the actual notifications. This separation of processing and
   notification delivery allows for modular and scalable architecture.
+
+### Reliability
+
+To ensure reliability in the system, the following steps were implemented using the rebalancer and sender services:
+
+- `Sender Service:` When the sender service encounter an error while sending a notification, it marks it as "RESENDING."
+  This step allows for tracking notifications that may require reprocessing in case of failures or inconsistencies.
+
+- `Rebalancer Service:` The rebalancer service periodically retrieves notifications marked as "RESENDING." By doing so,
+  it actively monitors for any failed deliveries or pending notifications, ensuring that no data loss occurs.
+
+- `Transmitting to Kafka:` Once the rebalancer service retrieves the "RESENDING" notifications, it transmits them back
+  to the Kafka system. This step facilitates the consistent delivery of notifications, mitigating any potential delays
+  or issues that may have occurred during the initial sending process.
 
 ### Endpoints documentation
 
