@@ -29,20 +29,23 @@ public class KafkaListeners {
             groupId = "emergency",
             containerFactory = "listenerContainerFactory"
     )
-    private void telegramNotificationListener(NotificationKafka notificationKafka) {
-        log(notificationKafka);
-        if (randomlyResent(notificationKafka)) { // for Rebalancer Testing purpose
-            return;
-        }
-        String credential = notificationKafka.credential();
-        TemplateHistoryResponse template = notificationKafka.template();
-        boolean isSuccessfullySent = telegramAlertService.sendMessage(credential, template);
-        if (isSuccessfullySent) {
-            notificationClient.setNotificationAsSent(notificationKafka.clientId(), notificationKafka.id());
-        } else if (notificationKafka.retryAttempts() == maxRetryAttempts) {
-            notificationClient.setNotificationAsError(notificationKafka.clientId(), notificationKafka.id());
+    private void telegramNotificationListener(NotificationKafka notification) {
+        log(notification);
+        Long clientId = notification.clientId();
+        Long notificationId = notification.id();
+        if (notification.retryAttempts() >= maxRetryAttempts) {
+            notificationClient.setNotificationAsError(clientId, notificationId);
+        } else if (random()) {
+            notificationClient.setNotificationAsResending(clientId, notificationId);
         } else {
-            notificationClient.setNotificationAsResending(notificationKafka.clientId(), notificationKafka.id());
+            String credential = notification.credential();
+            TemplateHistoryResponse template = notification.template();
+            boolean isSent = telegramAlertService.sendMessage(credential, template);
+            if (isSent) {
+                notificationClient.setNotificationAsSent(clientId, notificationId);
+            } else {
+                notificationClient.setNotificationAsResending(clientId, notificationId);
+            }
         }
     }
 
@@ -51,13 +54,18 @@ public class KafkaListeners {
             groupId = "emergency",
             containerFactory = "listenerContainerFactory"
     )
-    private void emailNotificationListener(NotificationKafka notificationKafka) {
-        log(notificationKafka);
-        if (randomlyResent(notificationKafka)) { // for Rebalancer Testing purpose
-            return;
-        }
-        notificationClient.setNotificationAsCorrupt(notificationKafka.clientId(), notificationKafka.id());
+    private void emailNotificationListener(NotificationKafka notification) {
+        log(notification);
+        Long clientId = notification.clientId();
+        Long notificationId = notification.id();
+        if (notification.retryAttempts() >= maxRetryAttempts) {
+            notificationClient.setNotificationAsError(clientId, notificationId);
+        } else if (random()) {
+            notificationClient.setNotificationAsResending(clientId, notificationId);
+        } else {
+            notificationClient.setNotificationAsCorrupt(clientId, notificationId);
 //         TODO: Amazon SES
+        }
     }
 
     @KafkaListener(
@@ -65,13 +73,18 @@ public class KafkaListeners {
             groupId = "emergency",
             containerFactory = "listenerContainerFactory"
     )
-    private void phoneNotificationListener(NotificationKafka notificationKafka) {
-        log(notificationKafka);
-        if (randomlyResent(notificationKafka)) { // for Rebalancer Testing purpose
-            return;
-        }
-        notificationClient.setNotificationAsCorrupt(notificationKafka.clientId(), notificationKafka.id());
+    private void phoneNotificationListener(NotificationKafka notification) {
+        log(notification);
+        Long clientId = notification.clientId();
+        Long notificationId = notification.id();
+        if (notification.retryAttempts() >= maxRetryAttempts) {
+            notificationClient.setNotificationAsError(clientId, notificationId);
+        } else if (random()) {
+            notificationClient.setNotificationAsResending(clientId, notificationId);
+        } else {
+            notificationClient.setNotificationAsCorrupt(clientId, notificationId);
 //         TODO: Twilio
+        }
     }
 
     private void log(NotificationKafka notificationKafka) { // TODO: AOP logging
@@ -84,11 +97,7 @@ public class KafkaListeners {
         );
     }
 
-    private boolean randomlyResent(NotificationKafka notificationKafka) {
-        if (random.nextInt(100) <= 33) {
-            notificationClient.setNotificationAsResending(notificationKafka.clientId(), notificationKafka.id());
-            return true;
-        }
-        return false;
+    private boolean random() {
+        return random.nextInt(100) <= 33;
     }
 }

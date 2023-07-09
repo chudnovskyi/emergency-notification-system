@@ -1,12 +1,12 @@
 package com.example.notification.model;
 
 public enum NotificationStatus implements EnumeratedEntityField {
-    NEW("N"),       // just been created
-    PENDING("P"),   // in sending process
+    NEW("N"),       // has just been created
+    PENDING("P"),   // is currently in the sending process
     SENT("S"),      // has been successfully sent
     RESENDING("R"), // is queued for re-sending
-    ERROR("E"),     // encountered an `retryAttempts` amount of errors during sending
-    CORRUPT("C");   // impossible to sent (no such recipient, etc)
+    ERROR("E"),     // encountered a certain number of errors during sending
+    CORRUPT("C");   // is impossible to send (e.g., due to invalid recipient)
 
     private final String code;
 

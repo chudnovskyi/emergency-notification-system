@@ -14,8 +14,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface NotificationMapper extends EntityMapper<Notification, NotificationRequest, NotificationResponse> {
 
-    NotificationKafka mapToKafka(NotificationResponse notificationResponse);
-
     @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
@@ -26,6 +24,11 @@ public interface NotificationMapper extends EntityMapper<Notification, Notificat
 
     @Mapping(target = "template", expression = "java(templateClient.getTemplateHistory(notification.getClientId(), notification.getTemplateHistoryId()).getBody())")
     NotificationResponse mapToResponse(Notification notification, @Context TemplateClient templateClient);
+
+    @Mapping(target = "template", expression = "java(templateClient.getTemplateHistory(notification.getClientId(), notification.getTemplateHistoryId()).getBody())")
+    NotificationKafka mapToKafka(Notification notification, @Context TemplateClient templateClient);
+
+    NotificationKafka mapToKafka(NotificationResponse notificationResponse);
 
     @Mapping(target = "id", ignore = true)
     NotificationHistory mapToHistory(Notification notification);

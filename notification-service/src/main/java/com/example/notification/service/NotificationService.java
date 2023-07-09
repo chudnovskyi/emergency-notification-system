@@ -83,16 +83,15 @@ public class NotificationService {
                 .orElseThrow(); // TODO
     }
 
-    public List<NotificationKafka> getNotificationsForRebalancing(Long clientId, Long pendingSec, Long newSec, Integer size) {
+    public List<NotificationKafka> getNotificationsForRebalancing(Long pendingSec, Long newSec, Integer size) {
         LocalDateTime now = LocalDateTime.now();
         return notificationRepository.findNotificationsByStatusAndCreatedAt(
-                        clientId, now.minus(pendingSec, SECONDS), now.minus(newSec, SECONDS), Pageable.ofSize(size)
+                        now.minus(pendingSec, SECONDS), now.minus(newSec, SECONDS), Pageable.ofSize(size)
                 ).stream()
                 .map(notification -> notification.setNotificationStatus(PENDING))
                 .map(Notification::updateCreatedAt)
                 .map(notificationRepository::saveAndFlush)
-                .map(mapper::mapToResponse)
-                .map(mapper::mapToKafka)
+                .map(notification -> mapper.mapToKafka(notification, templateClient))
                 .toList();
     }
 

@@ -68,13 +68,12 @@ public class NotificationController {
     @GetMapping("/")
     @Operation(summary = "FOR REBALANCER: get Resending/Pending/New Notifications (set Pending status)")
     public ResponseEntity<List<NotificationKafka>> getNotificationsForRebalancing(
-            @RequestHeader Long clientId,
             @RequestParam(name = "pending", required = false, defaultValue = "10") Long pendingSec,
             @RequestParam(name = "new", required = false, defaultValue = "10") Long newSec,
             @RequestParam(name = "size", required = false, defaultValue = "20") Integer size
     ) {
         return ResponseEntity.status(OK).body(
-                notificationService.getNotificationsForRebalancing(clientId, pendingSec, newSec, size)
+                notificationService.getNotificationsForRebalancing(pendingSec, newSec, size)
         );
     }
 }

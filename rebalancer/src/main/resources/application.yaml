@@ -15,7 +15,7 @@ spring:
 rebalancer:
   seconds-before-resend-pending: 5
   seconds-before-resend-new: 5
-  max-amount-to-fetch: 10
+  max-amount-to-fetch: 15
 
 services:
   notification: notification-service

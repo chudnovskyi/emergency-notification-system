@@ -18,17 +18,13 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             SELECT n
             FROM Notification n
             WHERE
-            n.clientId = :clientId AND
-            (
-                n.status = 'R'
-                    OR
-                n.status = 'N' AND n.createdAt < :newDateTime
-                    OR
-                n.status = 'P' AND n.createdAt  < :pendingDateTime
-            )
+            n.status = 'R'
+                OR
+            n.status = 'N' AND n.createdAt < :newDateTime
+                OR
+            n.status = 'P' AND n.createdAt  < :pendingDateTime
             """)
     List<Notification> findNotificationsByStatusAndCreatedAt(
-            @Param("clientId") Long clientId,
             @Param("pendingDateTime") LocalDateTime pendingDateTime,
             @Param("newDateTime") LocalDateTime newDateTime,
             Pageable pageable
