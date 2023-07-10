@@ -32,6 +32,8 @@
   minimize response time during emergencies.
 - [x] **Scalability:** The system should be able to handle a growing number of recipients and notifications without
   compromising performance or functionality.
+- [x] **Security:** The system should have appropriate security measures in place to protect sensitive information,
+  prevent unauthorized access, and ensure the privacy and integrity of data.
 
 ## Additional Features:
 
@@ -81,28 +83,31 @@ To ensure reliability in the system, the following steps were implemented using 
   to the Kafka system. This step facilitates the consistent delivery of notifications, mitigating any potential delays
   or issues that may have occurred during the initial sending process.
 
+### Security
+
+These steps ensure that only authenticated clients with valid JWT tokens can access the system, and downstream services
+can make informed decisions based on the client's identity.
+
+1. The client initiates a request to the API gateway and includes a JWT token in the request headers.
+2. The API gateway intercepts the request and extracts the JWT token.
+3. The extracted JWT token is validated by the API gateway using a Security service.
+4. Upon successful validation, the Security service responds with a client ID.
+5. The API gateway adds the client ID as a header to the request and forwards it to the relevant downstream service.
+6. The downstream service receives the request with the client ID in the headers, allowing it to identify and process
+   the request based on the client's identity.
+
 ### Endpoints documentation
 
 > Access all API documentation in one place using Ape-Gateway's centralized approach.
 > Explore endpoints and their functionalities conveniently through
 > this [link](http://localhost:8080/webjars/swagger-ui/index.html).
 
-#### security-service
-
 ![](images/security-docs.png)
-
-#### recipient-service
 
 ![](images/recipient-docs.png)
 
-#### template-service
-
 ![](images/template-docs.png)
 
-#### notification-service
-
 ![](images/notification-docs.png)
-
-#### file-service
 
 ![](images/file-docs.png)
