@@ -48,8 +48,8 @@ public class TemplateControllerIT extends ITBase {
 
     @Test
     public void createTemplateTest() throws Exception {
-        String id = createTemplateCreated(TEMPLATE);
-        assertThat(id).isNotEmpty();
+        Long id = createTemplateCreated(TEMPLATE);
+        assertThat(id).isPositive();
 
         createTemplateConflict(TEMPLATE);
     }
@@ -58,16 +58,16 @@ public class TemplateControllerIT extends ITBase {
     public void getTemplateTest() throws Exception {
         getTemplateNotFound(1L);
 
-        String id = createTemplateCreated(TEMPLATE);
+        Long id = createTemplateCreated(TEMPLATE);
 
-        getTemplateOk(Long.valueOf(id), TEMPLATE);
+        getTemplateOk(id, TEMPLATE);
     }
 
     @Test
     public void deleteTemplateTest() throws Exception {
         deleteTemplateAndExpectResult(1L, false);
 
-        Long id = Long.valueOf(createTemplateCreated(TEMPLATE));
+        Long id = createTemplateCreated(TEMPLATE);
         getTemplateOk(id, TEMPLATE);
 
         deleteTemplateAndExpectResult(id, true);
@@ -78,7 +78,7 @@ public class TemplateControllerIT extends ITBase {
     public void addRecipientsTest() throws Exception {
         addRecipientsTemplateNotFound(1L, RECIPIENT_LIST_JSON);
 
-        Long id = Long.valueOf(createTemplateCreated(TEMPLATE));
+        Long id = createTemplateCreated(TEMPLATE);
         getTemplateOk(id, TEMPLATE);
 
         addRecipientsTemplateCreated(id, RECIPIENT_LIST_JSON, TEMPLATE);
@@ -89,7 +89,7 @@ public class TemplateControllerIT extends ITBase {
     public void deleteRecipientsTest() throws Exception {
         deleteRecipientsTemplateNotFound(1L, RECIPIENT_LIST_JSON);
 
-        Long id = Long.valueOf(createTemplateCreated(TEMPLATE));
+        Long id = createTemplateCreated(TEMPLATE);
         getTemplateOk(id, TEMPLATE);
 
         addRecipientsTemplateCreated(id, new RecipientListJson(List.of(1)), TEMPLATE);
@@ -97,7 +97,7 @@ public class TemplateControllerIT extends ITBase {
         getTemplateOk(id, TEMPLATE);
     }
 
-    private String createTemplateCreated(TemplateJson template) throws Exception {
+    private Long createTemplateCreated(TemplateJson template) throws Exception {
         ResultActions result = mockMvc.perform(post(CREATE.getUrl())
                         .header("clientId", CLIENT_ID)
                         .content(template.toJson())
@@ -110,7 +110,7 @@ public class TemplateControllerIT extends ITBase {
                         jsonPath("$.imageUrl").isEmpty(),
                         jsonPath("$.recipientIds").isEmpty()
                 );
-        return extractJsonValueByKey(result, "id");
+        return Long.valueOf(extractJsonValueByKey(result, "id"));
     }
 
     private void createTemplateConflict(TemplateJson template) throws Exception {

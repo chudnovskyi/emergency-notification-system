@@ -30,6 +30,6 @@ public class TemplateHistoryController {
             @RequestHeader Long clientId,
             @PathVariable("id") Long templateId
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(templateHistoryService.get(clientId, templateId));
+        return ResponseEntity.status(HttpStatus.OK).body(templateHistoryService.get(clientId, templateId));
     }
 }
