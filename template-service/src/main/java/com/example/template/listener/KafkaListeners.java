@@ -1,8 +1,7 @@
 package com.example.template.listener;
 
 import com.example.template.dto.kafka.TemplateRecipientKafka;
-import com.example.template.entity.RecipientId;
-import com.example.template.entity.Template;
+import com.example.template.mapper.RecipientIdMapper;
 import com.example.template.repository.RecipientIdRepository;
 import com.example.template.repository.TemplateRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,7 @@ public class KafkaListeners {
 
     private final RecipientIdRepository recipientIdRepository;
     private final TemplateRepository templateRepository;
+    private final RecipientIdMapper mapper;
 
     @Transactional
     @KafkaListener(
@@ -35,16 +35,7 @@ public class KafkaListeners {
                         kafka.templateId(),
                         kafka.recipientId()
                 )) {
-                    recipientIdRepository.save(
-                            RecipientId.builder()  // TODO: mapper
-                                    .recipientId(kafka.recipientId())
-                                    .template(
-                                            Template.builder()
-                                                    .id(kafka.templateId())
-                                                    .build()
-                                    )
-                                    .build()
-                    );
+                    recipientIdRepository.save(mapper.mapToEntity(kafka));
                 }
             }
         }
