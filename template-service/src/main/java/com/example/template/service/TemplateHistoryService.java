@@ -1,11 +1,17 @@
 package com.example.template.service;
 
 import com.example.template.dto.response.TemplateHistoryResponse;
+import com.example.template.entity.Template;
+import com.example.template.entity.TemplateHistory;
+import com.example.template.exception.history.HistoryNotFoundException;
+import com.example.template.exception.template.TemplateNotFoundException;
 import com.example.template.mapper.TemplateMapper;
 import com.example.template.repository.TemplateHistoryRepository;
 import com.example.template.repository.TemplateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,20 +19,39 @@ public class TemplateHistoryService {
 
     private final TemplateHistoryRepository templateHistoryRepository;
     private final TemplateRepository templateRepository;
+    private final MessageSourceService message;
     private final TemplateMapper mapper;
 
     public TemplateHistoryResponse create(Long clientId, Long templateId) {
-        return templateRepository.findByIdAndClientId(templateId, clientId) // TODO: retrieve existing if the fields repeats
+        Template template = templateRepository.findByIdAndClientId(templateId, clientId)
+                .orElseThrow(() -> new TemplateNotFoundException(
+                        message.getProperty("template.not_found", templateId, clientId)
+                ));
+
+        Optional<TemplateHistory> maybeTemplateHistory = templateHistoryRepository.findByClientIdAndTitleAndContent(
+                clientId,
+                template.getTitle(),
+                template.getContent()
+        );
+        if (maybeTemplateHistory.isPresent()) {
+            return mapper.mapToTemplateHistoryResponse(maybeTemplateHistory.get());
+        }
+
+        return Optional.of(template)
                 .map(mapper::mapToTemplateHistory)
                 .map(templateHistory -> templateHistory.addClient(clientId))
                 .map(templateHistoryRepository::saveAndFlush)
                 .map(mapper::mapToTemplateHistoryResponse)
-                .orElseThrow(); // TODO
+                .orElseThrow(() -> new HistoryNotFoundException(
+                        message.getProperty("history.creation", templateId)
+                ));
     }
 
-    public TemplateHistoryResponse get(Long clientId, Long templateId) {
-        return templateHistoryRepository.findByIdAndClientId(templateId, clientId)
+    public TemplateHistoryResponse get(Long clientId, Long historyId) {
+        return templateHistoryRepository.findByIdAndClientId(historyId, clientId)
                 .map(mapper::mapToTemplateHistoryResponse)
-                .orElseThrow(); // TODO
+                .orElseThrow(() -> new HistoryNotFoundException(
+                        message.getProperty("history.not_found", historyId, clientId)
+                ));
     }
 }

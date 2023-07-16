@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface TemplateHistoryRepository extends JpaRepository<TemplateHistory, Long> {
 
     Optional<TemplateHistory> findByIdAndClientId(Long templateHistoryId, Long clientId);
+
+    Optional<TemplateHistory> findByClientIdAndTitleAndContent(Long clientId, String title, String content);
 }

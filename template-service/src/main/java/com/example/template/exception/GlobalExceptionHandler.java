@@ -1,6 +1,8 @@
 package com.example.template.exception;
 
 import com.example.template.dto.response.ErrorResponse;
+import com.example.template.exception.history.HistoryCreationException;
+import com.example.template.exception.history.HistoryNotFoundException;
 import com.example.template.exception.template.TemplateCreationException;
 import com.example.template.exception.template.TemplateNotFoundException;
 import com.example.template.exception.template.TemplateTitleAlreadyExistsException;
@@ -34,7 +36,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            TemplateNotFoundException.class
+            TemplateNotFoundException.class,
+            HistoryNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, NOT_FOUND, request);
@@ -48,7 +51,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            TemplateCreationException.class
+            TemplateCreationException.class,
+            HistoryCreationException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, BAD_REQUEST, request);
