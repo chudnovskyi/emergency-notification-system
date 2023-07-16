@@ -64,6 +64,6 @@ public class TemplateController {
             @PathVariable("id") Long templateId,
             @RequestBody @Valid RecipientListRequest request
     ) {
-        return ResponseEntity.status(CREATED).body(templateService.removeRecipients(clientId, templateId, request));
+        return ResponseEntity.status(OK).body(templateService.removeRecipients(clientId, templateId, request));
     }
 }

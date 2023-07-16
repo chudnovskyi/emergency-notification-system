@@ -11,10 +11,5 @@ public enum Url {
     VALIDATE("/api/v1/auth/validate"),
     LOGOUT("/api/v1/auth/logout");
 
-    private final String constant;
-
-    @Override
-    public String toString() {
-        return constant;
-    }
+    private final String url;
 }

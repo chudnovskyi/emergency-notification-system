@@ -14,10 +14,5 @@ public enum Url {
     HISTORY_CREATE("/api/v1/templates/history/%s"),
     HISTORY_GET("/api/v1/templates/history/%s");
 
-    private final String constant;
-
-    @Override
-    public String toString() {
-        return constant;
-    }
+    private final String url;
 }

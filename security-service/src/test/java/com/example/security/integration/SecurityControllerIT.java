@@ -1,12 +1,11 @@
 package com.example.security.integration;
 
+import com.example.security.ITBase;
 import com.example.security.builder.AuthenticationJson;
 import com.example.security.builder.AuthenticationJsonBuilder;
-import com.example.security.config.ITBase;
 import com.example.security.service.MessageSourceService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -20,7 +19,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@AutoConfigureMockMvc
 @RequiredArgsConstructor
 public class SecurityControllerIT extends ITBase {
 
@@ -92,7 +90,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void registerClientReturnTrue(AuthenticationJson authenticationJson) throws Exception {
-        mockMvc.perform(post(REGISTER.toString())
+        mockMvc.perform(post(REGISTER.getUrl())
                         .content(authenticationJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
@@ -102,7 +100,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void registerInvalidRequest(AuthenticationJson authenticationJson) throws Exception {
-        mockMvc.perform(post(REGISTER.toString())
+        mockMvc.perform(post(REGISTER.getUrl())
                         .content(authenticationJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
@@ -112,7 +110,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void registerClientEmailAlreadyExists(AuthenticationJson authenticationJson) throws Exception {
-        mockMvc.perform(post(REGISTER.toString())
+        mockMvc.perform(post(REGISTER.getUrl())
                         .content(authenticationJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
@@ -122,7 +120,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private String authenticationReturnJwt(AuthenticationJson authenticationJson) throws Exception {
-        ResultActions resultActions = mockMvc.perform(post(AUTHENTICATE.toString())
+        ResultActions resultActions = mockMvc.perform(post(AUTHENTICATE.getUrl())
                         .content(authenticationJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
@@ -134,7 +132,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void authenticationBadCredentials(AuthenticationJson authenticationJson) throws Exception {
-        mockMvc.perform(post(AUTHENTICATE.toString())
+        mockMvc.perform(post(AUTHENTICATE.getUrl())
                         .content(authenticationJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
@@ -144,7 +142,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void authenticationNotFound(AuthenticationJson authenticationJson) throws Exception {
-        mockMvc.perform(post(AUTHENTICATE.toString())
+        mockMvc.perform(post(AUTHENTICATE.getUrl())
                         .content(authenticationJson.toJson())
                         .contentType(APPLICATION_JSON))
                 .andExpectAll(
@@ -154,7 +152,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void validateSuccess(String jwt) throws Exception {
-        mockMvc.perform(get(VALIDATE.toString())
+        mockMvc.perform(get(VALIDATE.getUrl())
                         .header("Authorization", "Bearer " + jwt))
                 .andExpectAll(
                         status().isOk(),
@@ -163,7 +161,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void validateForbidden(String jwt) throws Exception {
-        mockMvc.perform(get(VALIDATE.toString())
+        mockMvc.perform(get(VALIDATE.getUrl())
                         .header("Authorization", "Bearer " + jwt))
                 .andExpectAll(
                         status().isForbidden()
@@ -171,7 +169,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void validateInvalidJwt(String jwt) throws Exception {
-        mockMvc.perform(get(VALIDATE.toString())
+        mockMvc.perform(get(VALIDATE.getUrl())
                         .header("Authorization", "Bearer " + jwt))
                 .andExpectAll(
                         status().isForbidden(),
@@ -180,7 +178,7 @@ public class SecurityControllerIT extends ITBase {
     }
 
     private void logout(String jwt) throws Exception {
-        mockMvc.perform(get(LOGOUT.toString())
+        mockMvc.perform(get(LOGOUT.getUrl())
                         .header(AUTHORIZATION, "Bearer " + jwt))
                 .andExpectAll(
                         status().isOk()
