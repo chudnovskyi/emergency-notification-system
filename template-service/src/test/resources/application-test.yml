@@ -6,6 +6,9 @@ spring:
     properties.hibernate:
       ddl-auto: update
     show-sql: true
+  kafka:
+    topics:
+      template-update: template-updated
 
 eureka:
   client:

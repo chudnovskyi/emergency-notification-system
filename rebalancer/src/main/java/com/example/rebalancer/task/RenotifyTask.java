@@ -39,7 +39,7 @@ public class RenotifyTask {
 
     @Scheduled(fixedDelay = 5000)
     private void renotify() {
-        List<NotificationKafka> notificationKafkaList = notificationClient.getNotificationsForRebalancing(
+        List<NotificationKafka> notificationKafkaList = notificationClient.getNotificationsForRebalancing( // TODO: exception handling if service unavailable
                 secondsBeforeResendPending,
                 secondsBeforeResendNew,
                 amountToFetch

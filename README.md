@@ -96,6 +96,10 @@ can make informed decisions based on the client's identity.
 6. The downstream service receives the request with the client ID in the headers, allowing it to identify and process
    the request based on the client's identity.
 
+### Code Coverage: 29%
+
+![](images/code-coverage.png)
+
 ### Endpoints documentation
 
 > Access all API documentation in one place using Ape-Gateway's centralized approach.

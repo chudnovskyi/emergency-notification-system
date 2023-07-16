@@ -9,6 +9,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.CompletableFuture;
+
 @Component
 @RequiredArgsConstructor
 public class KafkaListeners {
@@ -19,7 +21,7 @@ public class KafkaListeners {
 
     @Transactional
     @KafkaListener(topics = "${spring.kafka.topics.template-update}")
-    public void listener(TemplateRecipientKafka kafka) {
+    public CompletableFuture<Void> listener(TemplateRecipientKafka kafka) {
         switch (kafka.operation()) {
             case REMOVE -> {
                 templateRepository.findById(kafka.templateId())
@@ -35,5 +37,6 @@ public class KafkaListeners {
                 }
             }
         }
+        return CompletableFuture.completedFuture(null);
     }
 }
