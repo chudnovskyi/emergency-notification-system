@@ -1,10 +1,8 @@
 package com.example.notification.dto.kafka;
 
 import com.example.notification.dto.response.TemplateHistoryResponse;
-import com.example.notification.model.NotificationType;
 import com.example.notification.model.NotificationStatus;
-
-import java.time.LocalDateTime;
+import com.example.notification.model.NotificationType;
 
 public record NotificationKafka(
         Long id,
@@ -12,7 +10,6 @@ public record NotificationKafka(
         String credential,
         NotificationStatus status,
         Integer retryAttempts,
-        LocalDateTime createdAt,
         TemplateHistoryResponse template,
         Long clientId
 ) {

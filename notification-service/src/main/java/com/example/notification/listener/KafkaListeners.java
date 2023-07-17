@@ -21,6 +21,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
+import static com.example.notification.model.NotificationType.*;
+
 @Component
 @RequiredArgsConstructor
 public class KafkaListeners {
@@ -44,7 +46,7 @@ public class KafkaListeners {
             groupId = "emergency",
             containerFactory = "listenerContainerFactory"
     )
-    private void listener(RecipientListKafka recipientListKafka) {
+    private void listener(RecipientListKafka recipientListKafka) { // TODO: @Async
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         Runnable runnable = () -> {
@@ -65,9 +67,9 @@ public class KafkaListeners {
                     continue;
                 }
 
-                sendNotificationByCredential(response::email, NotificationType.EMAIL, response, clientId, template, emailTopic);
-                sendNotificationByCredential(response::phoneNumber, NotificationType.PHONE, response, clientId, template, phoneTopic);
-                sendNotificationByCredential(response::telegramId, NotificationType.TELEGRAM, response, clientId, template, telegramTopic);
+                sendNotificationByCredential(response::email, EMAIL, response, clientId, template, emailTopic);
+                sendNotificationByCredential(response::phoneNumber, PHONE, response, clientId, template, phoneTopic);
+                sendNotificationByCredential(response::telegramId, TELEGRAM, response, clientId, template, telegramTopic);
             }
         };
 

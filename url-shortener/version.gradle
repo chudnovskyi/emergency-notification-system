@@ -1,0 +1,8 @@
+ext {
+    versions = [
+            mapstruct: '1.4.2.Final',
+            swagger  : '2.0.4',
+            assertj  : '3.11.1',
+            validator: '8.0.0.Final',
+    ]
+}
