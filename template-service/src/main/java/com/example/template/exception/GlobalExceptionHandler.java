@@ -6,6 +6,7 @@ import com.example.template.exception.history.HistoryNotFoundException;
 import com.example.template.exception.template.TemplateCreationException;
 import com.example.template.exception.template.TemplateNotFoundException;
 import com.example.template.exception.template.TemplateTitleAlreadyExistsException;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -37,7 +38,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             TemplateNotFoundException.class,
-            HistoryNotFoundException.class
+            HistoryNotFoundException.class,
+            FeignException.FeignClientException.NotFound.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(Exception e, WebRequest request) {
         return generateDefaultErrorMessage(e, NOT_FOUND, request);

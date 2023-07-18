@@ -1,6 +1,5 @@
 package com.example.template.controller;
 
-import com.example.template.dto.request.RecipientListRequest;
 import com.example.template.dto.request.TemplateRequest;
 import com.example.template.dto.response.TemplateResponse;
 import com.example.template.service.TemplateService;
@@ -45,25 +44,5 @@ public class TemplateController {
             @PathVariable("id") Long templateId
     ) {
         return ResponseEntity.status(OK).body(templateService.delete(clientId, templateId));
-    }
-
-    @PostMapping("/{id}/recipients")
-    @Operation(summary = "add Recipients to a Template")
-    public ResponseEntity<TemplateResponse> addRecipients(
-            @RequestHeader Long clientId,
-            @PathVariable("id") Long templateId,
-            @RequestBody @Valid RecipientListRequest request
-    ) {
-        return ResponseEntity.status(CREATED).body(templateService.addRecipients(clientId, templateId, request));
-    }
-
-    @DeleteMapping("/{id}/recipients")
-    @Operation(summary = "remove Recipients from a Template")
-    public ResponseEntity<TemplateResponse> removeRecipients(
-            @RequestHeader Long clientId,
-            @PathVariable("id") Long templateId,
-            @RequestBody @Valid RecipientListRequest request
-    ) {
-        return ResponseEntity.status(OK).body(templateService.removeRecipients(clientId, templateId, request));
     }
 }

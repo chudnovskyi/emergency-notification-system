@@ -1,6 +1,6 @@
 package com.example.shortener.controller;
 
-import com.example.shortener.model.request.NotificationOptionRequest;
+import com.example.shortener.model.request.NotificationOptionsRequest;
 import com.example.shortener.service.ResponseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class ResponseController {
 
     @PostMapping("/")
     public ResponseEntity<Long> create(
-            @RequestBody @Valid NotificationOptionRequest request
+            @RequestBody @Valid NotificationOptionsRequest request
     ) {
         return ResponseEntity.status(CREATED).body(responseService.createResponse(request));
     }

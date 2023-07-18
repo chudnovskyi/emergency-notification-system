@@ -45,6 +45,7 @@ spring:
 
 services:
   recipient: recipient-service
+  shortener: url-shortener
 
 springdoc:
   api-docs:

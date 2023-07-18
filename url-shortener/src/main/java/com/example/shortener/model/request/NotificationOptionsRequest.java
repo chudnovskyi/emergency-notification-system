@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public record NotificationOptionRequest(
+public record NotificationOptionsRequest(
         @NotEmpty @Size(max = 5) List<String> options
 ) {
 }

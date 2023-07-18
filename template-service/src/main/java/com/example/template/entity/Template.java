@@ -25,6 +25,7 @@ public class Template implements BaseEntity<Long> {
     private Long id;
 
     private Long clientId;
+    private Long responseId;
 
     @Column(nullable = false)
     private String title;
@@ -43,6 +44,11 @@ public class Template implements BaseEntity<Long> {
 
     public Template addClient(Long clientId) {
         setClientId(clientId);
+        return this;
+    }
+
+    public Template addResponse(Long responseId) {
+        setResponseId(responseId);
         return this;
     }
 
