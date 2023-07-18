@@ -64,6 +64,21 @@ services:
     volumes:
       - db-postgres-notification:/data
 
+  shortener-service-postgres:
+    container_name: shortener-service-postgres
+    hostname: shortener-service-postgres
+    image: postgres:alpine3.17
+    restart: always
+    ports:
+      - '5436:5432'
+    environment:
+      POSTGRES_DB: shortener
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data
+    volumes:
+      - db-postgres-shortener:/data
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     container_name: zookeeper
@@ -178,3 +193,4 @@ volumes:
   db-postgres-template: { }
   db-postgres-recipient: { }
   db-postgres-notification: { }
+  db-postgres-shortener: { }
