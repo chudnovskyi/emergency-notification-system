@@ -7,16 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "responses")
-public class Response implements BaseEntity<Long> {
+@Table(name = "urls")
+public class Url {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,17 +24,17 @@ public class Response implements BaseEntity<Long> {
 
     @Builder.Default
     @ElementCollection(
-            targetClass = String.class,
             fetch = FetchType.EAGER
     )
     @CollectionTable(
-            name = "options",
-            joinColumns = @JoinColumn(name = "response_id")
+            name = "url_option_mapping",
+            joinColumns = @JoinColumn(name = "url_id")
     )
-    @Column(
-            name = "option", nullable = false
+    @MapKeyColumn(
+            name = "url_key"
     )
-    private List<String> options = new ArrayList<>();
+    @Column(name = "option")
+    private Map<String, String> urlOptionMap = new HashMap<>();
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();

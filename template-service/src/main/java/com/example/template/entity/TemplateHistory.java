@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+// TODO: integrate with options
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,6 +19,7 @@ public class TemplateHistory implements BaseEntity<Long> {
     private Long id;
 
     private Long clientId;
+    private Long responseId;
 
     @Column(nullable = false)
     private String title;

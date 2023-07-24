@@ -28,13 +28,14 @@ public class TemplateHistoryService {
                         message.getProperty("template.not_found", templateId, clientId)
                 ));
 
-        Optional<TemplateHistory> maybeTemplateHistory = templateHistoryRepository.findByClientIdAndTitleAndContent(
+        Optional<TemplateHistory> optTemplateHistory = templateHistoryRepository.findByClientIdAndResponseIdAndTitleAndContent(
                 clientId,
+                template.getResponseId(),
                 template.getTitle(),
                 template.getContent()
         );
-        if (maybeTemplateHistory.isPresent()) {
-            return mapper.mapToTemplateHistoryResponse(maybeTemplateHistory.get());
+        if (optTemplateHistory.isPresent()) {
+            return mapper.mapToTemplateHistoryResponse(optTemplateHistory.get());
         }
 
         return Optional.of(template)

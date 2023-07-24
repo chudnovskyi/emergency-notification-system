@@ -77,6 +77,8 @@ springdoc:
         url: /recipient-service/api-docs
       - name: file-service
         url: /file-service/api-docs
+      - name: shortener-service
+        url: /shortener-service/api-docs
 
 eureka:
   client:
