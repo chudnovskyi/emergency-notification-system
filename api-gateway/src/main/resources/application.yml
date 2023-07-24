@@ -60,6 +60,15 @@ spring:
           predicates:
             - Path=/file-service/api-docs/**
 
+        - id: url-shortener
+          uri: lb://URL-SHORTENER
+          predicates:
+            - Path=/api/v1/responses/**
+        - id: url-shortener-docs
+          uri: lb://URL-SHORTENER
+          predicates:
+            - Path=/url-shortener/api-docs/**
+
 # http://localhost:8080/webjars/swagger-ui/index.html
 springdoc:
   api-docs:
@@ -77,8 +86,8 @@ springdoc:
         url: /recipient-service/api-docs
       - name: file-service
         url: /file-service/api-docs
-      - name: shortener-service
-        url: /shortener-service/api-docs
+      - name: url-shortener
+        url: /url-shortener/api-docs
 
 eureka:
   client:
