@@ -4,6 +4,8 @@ import com.example.notification.dto.response.TemplateHistoryResponse;
 import com.example.notification.model.NotificationStatus;
 import com.example.notification.model.NotificationType;
 
+import java.util.Map;
+
 public record NotificationKafka(
         Long id,
         NotificationType type,
@@ -11,6 +13,7 @@ public record NotificationKafka(
         NotificationStatus status,
         Integer retryAttempts,
         TemplateHistoryResponse template,
-        Long clientId
+        Long clientId,
+        Map<String, String> urlOptionMap
 ) {
 }

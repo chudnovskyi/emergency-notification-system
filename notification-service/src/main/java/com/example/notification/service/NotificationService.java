@@ -1,5 +1,6 @@
 package com.example.notification.service;
 
+import com.example.notification.client.ShortenerClient;
 import com.example.notification.client.TemplateClient;
 import com.example.notification.dto.kafka.NotificationKafka;
 import com.example.notification.dto.kafka.RecipientListKafka;
@@ -35,6 +36,7 @@ public class NotificationService {
     private final NotificationHistoryRepository notificationHistoryRepository;
     private final NotificationRepository notificationRepository;
     private final TemplateClient templateClient;
+    private final ShortenerClient shortenerClient;
     private final MessageSourceService message;
     private final NotificationMapper mapper;
     private final NodeChecker nodeChecker;
@@ -46,7 +48,7 @@ public class NotificationService {
     private String recipientListDistributionTopic;
 
     public String distributeNotifications(Long clientId, Long templateId) { // TODO: separate service
-        TemplateResponse templateResponse = templateClient.getTemplateByClientIdAndTemplateId(clientId, templateId)
+        TemplateResponse templateResponse = templateClient.getTemplateByClientIdAndTemplateId(clientId, templateId) // TODO: exception handling
                 .getBody(); // TODO: retrieve list of IDS at once, not TemplateResponse
 
         if (templateResponse == null) {
@@ -91,7 +93,7 @@ public class NotificationService {
                 .map(notification -> notification.setNotificationStatus(PENDING))
                 .map(Notification::updateCreatedAt)
                 .map(notificationRepository::saveAndFlush)
-                .map(notification -> mapper.mapToKafka(notification, templateClient))
+                .map(notification -> mapper.mapToKafka(notification, templateClient, shortenerClient))
                 .toList();
     }
 

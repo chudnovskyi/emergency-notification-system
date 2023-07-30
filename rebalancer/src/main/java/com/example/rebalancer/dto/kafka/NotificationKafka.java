@@ -6,6 +6,7 @@ import com.example.rebalancer.model.NotificationStatus;
 import com.example.rebalancer.model.NotificationType;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public record NotificationKafka(
         Long id,
@@ -15,6 +16,7 @@ public record NotificationKafka(
         Integer retryAttempts,
         LocalDateTime createdAt,
         TemplateHistoryResponse template,
-        Long clientId
+        Long clientId,
+        Map<String, String> urlOptionMap
 ) {
 }

@@ -1,14 +1,12 @@
 package com.example.shortener.controller;
 
 import com.example.shortener.dto.response.UrlsResponse;
-import com.example.shortener.model.request.NotificationOptionsRequest;
+import com.example.shortener.dto.request.NotificationOptionsRequest;
 import com.example.shortener.service.ResponseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
 

@@ -4,7 +4,7 @@ import com.example.shortener.dto.response.UrlsResponse;
 import com.example.shortener.entity.Response;
 import com.example.shortener.entity.Url;
 import com.example.shortener.mapper.ResponseMapper;
-import com.example.shortener.model.request.NotificationOptionsRequest;
+import com.example.shortener.dto.request.NotificationOptionsRequest;
 import com.example.shortener.repository.ResponseRepository;
 import com.example.shortener.repository.UrlRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +47,9 @@ public class ResponseService {
                 .urlOptionMap(urlOptionMap)
                 .build();// TODO: mapper
 
+        Url save = urlRepository.save(url);
         return new UrlsResponse(
-                urlRepository.save(url).getId(),
+                save.getId(),
                 urlOptionMap
         ); // TODO: mapper
     }

@@ -24,9 +24,9 @@ public class NotificationController {
     @Operation(summary = "send a Notification to all Recipients registered for the provided Template ID")
     public ResponseEntity<String> notify(
             @RequestHeader Long clientId,
-            @PathVariable("id") Long notificationId
+            @PathVariable("id") Long templateId
     ) {
-        return ResponseEntity.status(OK).body(notificationService.distributeNotifications(clientId, notificationId));
+        return ResponseEntity.status(OK).body(notificationService.distributeNotifications(clientId, templateId));
     }
 
     @PostMapping("/{id}/sent")

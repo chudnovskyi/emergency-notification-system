@@ -31,7 +31,7 @@ spring:
 services:
   recipient: recipient-service
   template: template-service
-  shortener: shortener-service
+  shortener: url-shortener
 
 springdoc:
   api-docs:

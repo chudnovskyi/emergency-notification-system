@@ -1,12 +1,14 @@
 package com.example.notification.listener;
 
 import com.example.notification.client.RecipientClient;
+import com.example.notification.client.ShortenerClient;
 import com.example.notification.dto.kafka.NotificationKafka;
 import com.example.notification.dto.kafka.RecipientListKafka;
 import com.example.notification.dto.request.NotificationRequest;
 import com.example.notification.dto.response.NotificationResponse;
 import com.example.notification.dto.response.RecipientResponse;
 import com.example.notification.dto.response.TemplateHistoryResponse;
+import com.example.notification.dto.response.UrlsResponse;
 import com.example.notification.mapper.NotificationMapper;
 import com.example.notification.model.NotificationType;
 import com.example.notification.service.NotificationService;
@@ -30,6 +32,7 @@ public class KafkaListeners {
     private final KafkaTemplate<String, NotificationKafka> kafkaTemplate;
     private final NotificationService notificationService;
     private final RecipientClient recipientClient;
+    private final ShortenerClient shortenerClient;
     private final NotificationMapper mapper;
 
     @Value("${spring.kafka.topics.notifications.email}")
@@ -67,9 +70,12 @@ public class KafkaListeners {
                     continue;
                 }
 
-                sendNotificationByCredential(response::email, EMAIL, response, clientId, template, emailTopic);
-                sendNotificationByCredential(response::phoneNumber, PHONE, response, clientId, template, phoneTopic);
-                sendNotificationByCredential(response::telegramId, TELEGRAM, response, clientId, template, telegramTopic);
+                UrlsResponse urlsResponse = shortenerClient.generate(template.responseId())
+                        .getBody();
+
+                sendNotificationByCredential(response::email, EMAIL, response, clientId, template, emailTopic, urlsResponse);
+                sendNotificationByCredential(response::phoneNumber, PHONE, response, clientId, template, phoneTopic, urlsResponse);
+                sendNotificationByCredential(response::telegramId, TELEGRAM, response, clientId, template, telegramTopic, urlsResponse);
             }
         };
 
@@ -78,12 +84,13 @@ public class KafkaListeners {
     }
 
     private void sendNotificationByCredential( // TODO: too many params
-            Supplier<String> supplier,
-            NotificationType type,
-            RecipientResponse recipientResponse,
-            Long clientId,
-            TemplateHistoryResponse template,
-            String topic
+                                               Supplier<String> supplier,
+                                               NotificationType type,
+                                               RecipientResponse recipientResponse,
+                                               Long clientId,
+                                               TemplateHistoryResponse template,
+                                               String topic,
+                                               UrlsResponse urlsResponse
     ) {
         String credential = supplier.get();
         if (credential != null) {
@@ -96,6 +103,7 @@ public class KafkaListeners {
                                 .template(template)
                                 .recipientId(recipientResponse.id())
                                 .clientId(clientId)
+                                .urlId(urlsResponse.urlId())
                                 .build()
                 ).id();
             } catch (EntityNotFoundException e) {
@@ -103,7 +111,7 @@ public class KafkaListeners {
                 return;
             }
             NotificationResponse response = notificationService.setNotificationAsPending(clientId, notificationId);
-            NotificationKafka notificationKafka = mapper.mapToKafka(response);
+            NotificationKafka notificationKafka = mapper.mapToKafka(response, urlsResponse.urlOptionMap());
             kafkaTemplate.send(topic, notificationKafka);
         }
     }

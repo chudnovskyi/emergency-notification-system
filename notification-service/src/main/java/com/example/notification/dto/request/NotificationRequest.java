@@ -1,7 +1,7 @@
 package com.example.notification.dto.request;
 
-import com.example.notification.model.NotificationType;
 import com.example.notification.dto.response.TemplateHistoryResponse;
+import com.example.notification.model.NotificationType;
 import lombok.Builder;
 
 @Builder
@@ -10,6 +10,7 @@ public record NotificationRequest(
         String credential,
         TemplateHistoryResponse template,
         Long recipientId,
-        Long clientId
+        Long clientId,
+        Long urlId
 ) {
 }

@@ -18,7 +18,7 @@ public class TemplateResponsesController {
 
     private final TemplateResponsesService templateResponsesService;
 
-    @DeleteMapping("/{id}/options")
+    @PostMapping("/{id}/options")
     @Operation(summary = "add Response options for a Template")
     public ResponseEntity<TemplateResponse> addResponseOptions(
             @RequestHeader Long clientId,

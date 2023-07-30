@@ -25,6 +25,7 @@ public class NotificationHistory implements BaseEntity<Long> {
     private Long clientId;
     private Long recipientId;
     private Long templateHistoryId;
+    private Long urlId;
 
     private NotificationType type;
     private String credential;

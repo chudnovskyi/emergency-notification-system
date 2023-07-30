@@ -1,5 +1,6 @@
 package com.example.notification.mapper;
 
+import com.example.notification.client.ShortenerClient;
 import com.example.notification.client.TemplateClient;
 import com.example.notification.dto.kafka.NotificationKafka;
 import com.example.notification.dto.request.NotificationRequest;
@@ -10,6 +11,8 @@ import com.example.notification.entity.NotificationHistory;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.Map;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper extends EntityMapper<Notification, NotificationRequest, NotificationResponse> {
@@ -26,9 +29,11 @@ public interface NotificationMapper extends EntityMapper<Notification, Notificat
     NotificationResponse mapToResponse(Notification notification, @Context TemplateClient templateClient);
 
     @Mapping(target = "template", expression = "java(templateClient.getTemplateHistory(notification.getClientId(), notification.getTemplateHistoryId()).getBody())")
-    NotificationKafka mapToKafka(Notification notification, @Context TemplateClient templateClient);
+    @Mapping(target = "urlOptionMap", expression = "java(shortenerClient.generate(template.responseId()).getBody().urlOptionMap())")
+    NotificationKafka mapToKafka(Notification notification, @Context TemplateClient templateClient, @Context ShortenerClient shortenerClient);
 
-    NotificationKafka mapToKafka(NotificationResponse notificationResponse);
+    @Mapping(target = "urlOptionMap", expression = "java(urlOptionMap)")
+    NotificationKafka mapToKafka(NotificationResponse notificationResponse, @Context Map<String, String> urlOptionMap);
 
     @Mapping(target = "id", ignore = true)
     NotificationHistory mapToHistory(Notification notification);
